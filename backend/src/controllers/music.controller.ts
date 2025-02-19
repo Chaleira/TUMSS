@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { fetchMusicFromYouTube, downloadVideoAndSaveToFile } from "../services/music.service";
+import fs from "fs";
+import { musicService } from "../services/music.service";
 
 export const searchMusic = async (req: Request, res: Response): Promise<void> => {
   const query = req.query.q;
@@ -10,7 +11,7 @@ export const searchMusic = async (req: Request, res: Response): Promise<void> =>
   }
 
   try {
-    const videos = await fetchMusicFromYouTube(query as string);
+    const videos = await musicService.fetchMusicFromYouTube(query as string);
     res.json(videos);
   } catch (error) {
     console.error('Error while searching for music:', error);
@@ -23,8 +24,18 @@ export const streamMusic = async (req: Request, res: Response): Promise<void> =>
   
     try {
         const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-        const filePath = await downloadVideoAndSaveToFile(videoUrl, videoId);
-        res.sendFile(filePath);
+        const filePathMp3 = await musicService.downloadVideoAndSaveToFile(videoUrl, videoId);
+
+        const stat = fs.statSync(filePathMp3);
+        const fileSize = stat.size;
+
+        res.writeHead(200, {
+            'Content-Type': 'audio/mpeg',
+            'Content-Length': fileSize,
+        });
+
+        const stream = fs.createReadStream(filePathMp3);
+        stream.pipe(res);
     } catch (error) {
       console.error('Error while downloading video:', error);
       res.status(500).json({ message: 'Error downloading video.' });

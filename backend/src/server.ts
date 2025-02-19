@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/user", userRoutes);
-app.use("/music", authenticateUser, musicRoutes);
+app.use("/music", musicRoutes);
 app.get("/", authenticateUser, (req: Request, res: Response) => {res.send("🎵 Welcome to the music app!")});
 
 app.listen(port, () => console.log(`🎵 Server running on http://localhost:${port}`));

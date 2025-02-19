@@ -1,13 +1,22 @@
-import Database from "better-sqlite3";
+import { Sequelize } from 'sequelize';
 
-const db = new Database("database.sqlite");
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite',
+  logging: false,
+});
 
-db.prepare(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
-  )
-`).run();
+const syncDatabase = async () => {
+  try {
+    await sequelize.sync({ force: true });  // `force: true` will drop existing tables before creating new ones
+    console.log('Database synced successfully!');
+  } catch (error) {
+    
+    console.error('Error syncing database:', error);
+  }
+};
 
-export default db;
+syncDatabase();
+
+export default sequelize;
+

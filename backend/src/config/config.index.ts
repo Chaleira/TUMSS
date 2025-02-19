@@ -15,12 +15,6 @@ if (!youtube_api_key) {
   process.exit(1);
 }
 
-export const search_website = process.env.SEARCH_WEBSITE as string;
-if (!search_website) {
-  console.error("No search website set. Set SEARCH_WEBSITE environment variable.");
-  process.exit(1);
-}
-
 export const DOWNLOADS_FOLDER = path.resolve(__dirname, '../../downloads');
 
 export const port = process.env.PORT || 3000;
