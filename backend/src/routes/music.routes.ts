@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { searchMusic, streamMusic } from "../controllers/music.controller";
+import { musicController } from "../controllers/music.controller";
 
 const router = Router();
 
-router.get("/search", searchMusic);
-router.get("/stream/:videoId", streamMusic);
+router.get("/search", musicController.searchMusic);
+router.get("/stream/:videoId", musicController.streamMusic);
+
+router.post("/create", musicController.createMusic);
 
 export default router;

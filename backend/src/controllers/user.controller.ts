@@ -1,61 +1,49 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import { userService } from "../services/user.service";
 import jwt from "jsonwebtoken";
 import { jwt_secret } from "../config/config.index";
 
-export const registerUser: RequestHandler = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { username, password } = req.body;
+export const userController = {
 
-  if (!username || !password) {
-    res.status(400).json({ error: "Username and password are required" });
-    return;
-  }
+	registerUser: async (req: Request, res: Response): Promise<void> => {
+	const { username, password } = req.body;
 
-  const existingUser = await userService.findUserByUsername(username);
-  if (existingUser) {
-    res.status(400).json({ error: "Username already exists" });
-    return;
-  }
+	if (!username || !password) {
+		res.status(400).json({ error: "Username and password are required" });
+		return;
+	}
 
-  const userId = await userService.createUser(username, password);
-  if (!userId) {
-    res.status(500).json({ error: "Error creating user" });
-    return
-  }
-  res.status(201).json({ message: "User created", userId });
-};
+	try {
+		const existingUser = await userService.findUserByUsername(username);
+		if (existingUser) {
+			res.status(400).json({ error: "Username already exists" });
+			return;
+		}
 
-export const loginUser: RequestHandler = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { username, password } = req.body;
+		const userId = await userService.createUser(username, password);
+		res.status(201).json({ message: "User created", userId });
+	} catch (error: any) {
+		console.error(error.message);
+		res.status(500).json({ error: error.message });
+	}
+	},
 
-  if (!username || !password) {
-    res.status(400).json({ error: "Username and password are required" });
-    return;
-  }
+	loginUser: async (req: Request, res: Response): Promise<void> => {
+	const { username, password } = req.body;
 
-  const user = await userService.validateUser(username, password);
-  if (!user) {
-    res.status(401).json({ error: "Invalid credentials" });
-    return;
-  }
+	if (!username || !password) {
+		res.status(400).json({ error: "Username and password are required" });
+		return;
+	}
 
-  const token = jwt.sign({ id: user?.id }, jwt_secret, { expiresIn: "1h" });
+	const user = await userService.validateUser(username, password);
+	if (!user) {
+		res.status(401).json({ error: "Invalid credentials" });
+		return;
+	}
 
-  res.status(200).json({ token });
-};
+	const token = jwt.sign({ id: user?.id }, jwt_secret, { expiresIn: "1h" });
 
-// This is basicly ussless
-export const logoutUser: RequestHandler = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  // @ts-ignore
-  req.user = null;
-  res.json({ message: "Logout successful" });
-};
+	res.status(200).json({ token });
+	},
+}

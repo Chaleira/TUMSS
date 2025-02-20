@@ -8,7 +8,7 @@ const sequelize = new Sequelize({
 
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ force: true });  // `force: true` will drop existing tables before creating new ones
+    await sequelize.sync({ force: false });  // `force: true` will drop existing tables before creating new ones
     console.log('Database synced successfully!');
   } catch (error) {
     

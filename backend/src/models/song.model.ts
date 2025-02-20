@@ -5,7 +5,7 @@ class Song extends Model {
   public id!: number;
   public title!: string;
   public artist!: string;
-  public fileName!: string;
+  public fileId!: string;
 }
 
 Song.init(
@@ -25,7 +25,7 @@ Song.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fileName: {
+    fileId: {
       type: DataTypes.STRING,
       allowNull: false,
     },

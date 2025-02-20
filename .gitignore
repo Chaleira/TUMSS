@@ -134,3 +134,4 @@ dist
 database.sqlite
 downloads
 venv
+tests
