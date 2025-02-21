@@ -1,22 +1,20 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: './database.sqlite',
-  logging: false,
+	dialect: "sqlite",
+	storage: "./database.sqlite",
+	logging: false,
 });
 
 const syncDatabase = async () => {
-  try {
-    await sequelize.sync({ force: false });  // `force: true` will drop existing tables before creating new ones
-    console.log('Database synced successfully!');
-  } catch (error) {
-    
-    console.error('Error syncing database:', error);
-  }
+	try {
+		await sequelize.sync({ force: false }); // `force: true` will drop existing tables before creating new ones
+		console.log("Database synced successfully!");
+	} catch (error) {
+		console.error("Error syncing database:", error);
+	}
 };
 
 syncDatabase();
 
 export default sequelize;
-
