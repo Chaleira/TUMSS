@@ -14,6 +14,7 @@ app.use("/user", userRoutes);
 app.use("/music", authenticateUser, musicRoutes);
 app.use("/playlist", authenticateUser, playlistRoutes);
 app.get("/", authenticateUser, (req: Request, res: Response) => {
+	console.log("🎵 Welcome to the music app!");
 	res.send("🎵 Welcome to the music app!");
 });
 
