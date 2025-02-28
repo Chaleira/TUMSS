@@ -5,10 +5,13 @@ import musicRoutes from "./routes/music.routes";
 import userRoutes from "./routes/user.routes";
 import playlistRoutes from "./routes/playlist.routes";
 import { authenticateUser } from "./middlewares/auth.middleware";
+import path from "path";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+const downloadsPath = path.join(__dirname, "downloads");
+app.use("/downloads", express.static(downloadsPath));
 
 app.use("/user", userRoutes);
 app.use("/music", authenticateUser, musicRoutes);

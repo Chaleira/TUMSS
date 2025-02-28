@@ -14,7 +14,7 @@ export const musicController = {
 
 		try {
 			const videos = await musicService.fetchMusicFromYouTube(query as string);
-			res.json(videos);
+			res.status(200).json(videos);
 		} catch (error: any) {
 			console.error(error.message);
 			res.status(500).json({ message: error.message });

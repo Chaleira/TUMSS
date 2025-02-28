@@ -1,14 +1,16 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // Import icons
 import { TouchableOpacity } from "react-native";
+import { useAuthActions } from "../../hooks/authHook";
 
-export default function Layout() {
+export default function MainLayout() {
+	  const { logout } = useAuthActions();
   return (
     <Tabs
       screenOptions={{
         headerLeft: () => (
-          <TouchableOpacity onPress={() => console.log("Button Pressed!")}>
-            <Ionicons name="menu" size={24} color="black" style={{ marginLeft: 15 }} />
+          <TouchableOpacity onPress={() => {logout(); router.replace('/login');}}>
+            <Ionicons name="log-out" size={24} color="black" style={{ marginLeft: 15 }} />
           </TouchableOpacity>
         ),
       }}

@@ -1,41 +1,22 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
-import  { loginUser, getMainData, logoutUser }  from '../api/auth';
+import { useAuthActions } from '../hooks/authHook';
+import MyButton from '@components/MyButton';
+import { getMainData } from '@api/auth';
 
-const LoginScreen = () => {
+export const LoginScreen = () => {
+	const { useLogin } = useAuthActions();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-    try {
-      const userData = await loginUser(username, password);
-	  router.replace('/(main)');
-      Alert.alert('Login Success', `Welcome ${userData.user.username}`);
-    } catch (error: any) {
-		console.log('Login error:', error.message);
-      	Alert.alert('Login Failed', error.message);
-    }
-  };
-
-  const handleGet = async () => {
-	try {
-		const data = await getMainData();
-		Alert.alert('Data received', data);
-	} catch (error: any) {
-		console.log('Get main data error:', error.message);
-		Alert.alert('Error', error.message);
-	}
-}
-
-	const handleLogout = async () => {
-		try {
-			await logoutUser();
-			Alert.alert('Logout Success', 'You have been logged out');
-		} catch (error) {
-			Alert.alert('Logout Failed', 'An error occurred');
+	const handleGet = async () => {
+		try{
+			const data = await getMainData();
+			Alert.alert('Get', data);
+		} catch (error: any) {
+			Alert.alert('Get', error.message);
 		}
-	};
+	}
 
 	return (
 		<View style={styles.container}>
@@ -57,10 +38,10 @@ const LoginScreen = () => {
 			onChangeText={setPassword}
 			secureTextEntry 
 		  />
-	
-		  <TouchableOpacity style={styles.button} onPress={handleLogin}>
+		  <TouchableOpacity style={styles.button} onPress={() => {useLogin(username, password)}}>
 			<Text style={styles.buttonText}>Login</Text>
 		  </TouchableOpacity>
+			<MyButton title="Get" onPress={handleGet} />
 		</View>
 	  );
 };
@@ -109,8 +90,5 @@ const styles = StyleSheet.create({
 	  fontWeight: 'bold',
 	},
   });
-
-{/* <Button title="Get" onPress={handleGet} />
-      <Button title="Logout" onPress={handleLogout} /> */}
 
 export default LoginScreen;

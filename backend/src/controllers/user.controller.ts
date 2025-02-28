@@ -30,7 +30,6 @@ export const userController = {
 
 	loginUser: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
 		const { username, password } = req.body;
-		console.log(username, password);
 
 		if (!username || !password) {
 			res.status(400).json({ message: "Username and password are required" });
