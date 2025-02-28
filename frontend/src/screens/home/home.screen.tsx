@@ -2,12 +2,21 @@ import React from 'react';
 import { View, Text, Alert } from 'react-native';
 import MyButton from 'components/MyButton';
 import { getMainData } from '@api/user.api';
-import { useAuthActions } from '@hooks/auth.hooks';
-import { useAuth } from 'context/auth.context';
+import { useAuth } from '@hooks/auth.hooks';
+import { useState, useMemo } from "react";
+
+const ExpensiveCalculation = ({count}: any) => {
+	const expensiveResult = useMemo(() => {
+	  console.log("Calculating...");
+	  return count * 2;
+	}, [count]); // Recomputes only when count changes
+  
+	return <Text>Result: {expensiveResult}</Text>;
+  };
 
 export default function HomeScreen({ navigation }: any) {
-  const { user } = useAuth();
-  const { logout, onLogout } = useAuthActions();
+  const { user, logout } = useAuth();
+  const [count, setCount] = useState(1);
 
   const handleGet = async () => {
 		try{
@@ -25,9 +34,11 @@ export default function HomeScreen({ navigation }: any) {
       		<Text style={{ fontSize: 24 }}>Home Screen</Text>
     	</View>
 		<View style={{paddingBottom: 100}}>
-			<MyButton title="Logout" onPress={() => logout(navigation)} />
-			<MyButton title="onLogout" onPress={onLogout} />
+			<MyButton title="Logout" onPress={() => logout()} />
 			<MyButton title="Get" onPress={handleGet} />
+			<MyButton title="count" onPress={() => setCount(count + 1)} />
+			<ExpensiveCalculation count={count} />
+			<MyButton title="Get" onPress={()=>{navigation.navigate('Player')}} />
 		</View>
 	</View>
 	

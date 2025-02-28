@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Alert, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useAuthActions } from "../../hooks/auth.hooks";
+import { useAuth } from "../../hooks/auth.hooks";
 import MyButton from "../../components/MyButton";
 import { getMainData } from "../../api/user.api";
 
@@ -8,7 +8,7 @@ import { getMainData } from "../../api/user.api";
 export default function LoginScreen({ navigation }: any) {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const { login } = useAuthActions();
+	const { login } = useAuth();
 
 	const handleGet = async () => {
 		try {
@@ -29,11 +29,12 @@ export default function LoginScreen({ navigation }: any) {
 			<TouchableOpacity
 				style={styles.button}
 				onPress={() => {
-					login(username, password, navigation);
+					login(username, password);
 				}}
 			>
 				<Text style={styles.buttonText}>Login</Text>
 			</TouchableOpacity>
+			<MyButton title="Register" onPress={() => navigation.replace('Register')} />
 			<MyButton title="Get" onPress={handleGet} />
 		</View>
 	);

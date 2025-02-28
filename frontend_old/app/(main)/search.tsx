@@ -4,11 +4,11 @@ import SearchBar from "../../components/SearchBar";
 import { useMusicActions } from "hooks/musicHooks";
 
 const SearchScreen: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [results, setResults] = useState<{ title: string; thumbnail: string; videoUrl: string }[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const { search } = useMusicActions();
-
+	const [loading, setLoading] = useState<boolean>(false);
+	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [results, setResults] = useState<{ title: string; thumbnail: string; videoUrl: string }[]>([]);
+	const { search } = useMusicActions();
+	
   useEffect(() => {
     if (!searchQuery) {
       setResults([]);

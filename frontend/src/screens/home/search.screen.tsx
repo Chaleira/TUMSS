@@ -1,35 +1,29 @@
-import React from 'react';
-import { View, Text, Alert } from 'react-native';
-import MyButton from 'components/MyButton';
-import { getMainData } from '@api/user.api';
-import { useAuthActions } from '@hooks/auth.hooks';
-import { useAuth } from 'context/auth.context';
+import React from "react";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, StatusBar } from "react-native";
+import SearchBar from "../../components/SearchBar";
+import { useSearch } from "../../hooks/music.hooks";
 
-export function SearchScreen({ navigation }: any) {
-  const { user } = useAuth();
-  const { logout, onLogout } = useAuthActions();
-
-  const handleGet = async () => {
-		try{
-			const data = await getMainData();
-			Alert.alert('Get', data);
-		} catch (error: any) {
-			Alert.alert('Get', error.message);
-		}
-	}
+export function SearchScreen(){
+  const { inputRef, setSearchQuery, results, loading } = useSearch();
 
   return (
-	  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      		<Text style={{ fontSize: 24 }}>Welcome {user?.username} !</Text>
-      		<Text style={{ fontSize: 24 }}>Search Screen</Text>
-    	</View>
-		<View style={{paddingBottom: 100}}>
-			<MyButton title="Logout" onPress={() => logout(navigation)} />
-			<MyButton title="onLogout" onPress={onLogout} />
-			<MyButton title="Get" onPress={handleGet} />
-		</View>
-	</View>
-	
+    <View style={{ flex: 1, padding: 10, paddingTop: 40 }}>
+      <SearchBar onSearch={setSearchQuery} focus={inputRef}/>
+
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+      <FlatList
+        data={results}
+        keyExtractor={(item) => item.videoUrl}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => console.log("Video URL:", item.videoUrl)}>
+            <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
+              <Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
+              <Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
   );
-}
+};

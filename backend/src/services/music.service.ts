@@ -65,7 +65,7 @@ export const musicService = (() => {
 	// After this return statement, all methods are public
 	return {
 		fetchMusicFromYouTube: async (query: string): Promise<any[]> => {
-			const maxResults = 10;
+			const maxResults = 20;
 
 			try {
 				const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
