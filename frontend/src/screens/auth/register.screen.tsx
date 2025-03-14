@@ -8,16 +8,8 @@ import { getMainData } from "../../api/user.api";
 export function RegisterScreen({ navigation }: any) {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
-	const { login } = useAuth();
-
-	const handleGet = async () => {
-		try {
-			const data = await getMainData();
-			Alert.alert("Get", data);
-		} catch (error: any) {
-			Alert.alert("Get", error.message);
-		}
-	};
+	const [password2, setPassword2] = useState("");
+	const { register } = useAuth();
 
 	return (
 		<View style={styles.container}>
@@ -26,10 +18,16 @@ export function RegisterScreen({ navigation }: any) {
 			<TextInput style={styles.input} placeholder="Username" placeholderTextColor="#aaa" value={username} onChangeText={setUsername} />
 
 			<TextInput style={styles.input} placeholder="Password" placeholderTextColor="#aaa" value={password} onChangeText={setPassword} secureTextEntry />
+			<TextInput style={styles.input} placeholder="Repeat Password" placeholderTextColor="#aaa" value={password2} onChangeText={setPassword2} secureTextEntry />
 			<TouchableOpacity
 				style={styles.button}
-				onPress={() => {
-					login(username, password);
+				onPress={async () => {
+					if (password !== password2) {
+						alert("Passwords do not match");
+						return
+					}
+					if (await register(username, password))
+						navigation.navigate('Login');
 				}}
 			>
 				<Text style={styles.buttonText}>Register</Text>

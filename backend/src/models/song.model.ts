@@ -4,8 +4,9 @@ import sequelize from "../database";
 class Song extends Model {
 	public id!: number;
 	public title!: string;
-	public artist!: string;
+	// public artist!: string;
 	public fileId!: string;
+	public thumbnail!: string;
 }
 
 Song.init(
@@ -21,11 +22,15 @@ Song.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		artist: {
+		// artist: {
+		// 	type: DataTypes.STRING,
+		// 	allowNull: false,
+		// },
+		fileId: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		fileId: {
+		thumbnail: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},

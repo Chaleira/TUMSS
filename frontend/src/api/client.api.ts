@@ -1,21 +1,19 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { API_ENDPOINT, AUTH_TOKEN } from '@config/config.index';
 
-// Define the base URL of your backend
-// const API_URL = 'http://192.168.1.67:3000'; // Home
-const API_URL = 'http://192.168.0.69:3000'; // Mobile
-const TOKEN = "authToken";
+console.log(API_ENDPOINT);
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_ENDPOINT,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 api.interceptors.request.use(async (config) => {
-	const token = await SecureStore.getItemAsync(TOKEN);
+	const token = await SecureStore.getItemAsync(AUTH_TOKEN);
 	if (token) {
 	  config.headers.Authorization = `Bearer ${token}`;
 	}

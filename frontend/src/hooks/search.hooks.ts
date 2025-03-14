@@ -31,8 +31,8 @@ export function useSearch() {
       try {
         const response = await searchMusic(searchQuery);
         setResults(response);
-      } catch (error) {
-        console.error("API Error:", error);
+      } catch (error: any) {
+        console.error("API Error:", error.message);
       } finally {
         setLoading(false);
       }

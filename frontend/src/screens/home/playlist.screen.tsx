@@ -3,6 +3,7 @@ import { View, Text, Alert } from 'react-native';
 import MyButton from 'components/MyButton';
 import { getMainData } from '@api/user.api';
 import { useAuth } from '@hooks/auth.hooks';
+import BottomNav from '@components/BottomNav';
 
 export function PlaylistScreen({ navigation }: any) {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ export function PlaylistScreen({ navigation }: any) {
       		<Text style={{ fontSize: 24 }}>Welcome {user?.username} !</Text>
       		<Text style={{ fontSize: 24 }}>Playlist Screen</Text>
     	</View>
+		<BottomNav navigation={navigation} active="Playlist" />
 	</View>
 	
   );

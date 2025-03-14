@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { loginUser } from '../api/user.api';
+import { loginUser, registerUser } from '../api/user.api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { AuthContextType, User } from '../types/context.types';
@@ -51,8 +51,20 @@ export function AuthProvider({ children }: any ) {
 	}
   };
 
+  const register = async (username: string, password: string) => {
+	try {
+		await registerUser(username, password);
+		Alert.alert('Register Success', 'You can now login with your new account');
+		return true;
+	} catch (error: any) {
+		console.log('onRegister error:', error.message);
+		Alert.alert('Register Failed', error.message);
+		return false;
+	}
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading}}>
+    <AuthContext.Provider value={{ user, login, logout, loading, register}}>
       {children}
     </AuthContext.Provider>
   );

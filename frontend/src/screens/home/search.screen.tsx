@@ -1,10 +1,13 @@
 import React from "react";
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, StatusBar } from "react-native";
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity } from "react-native";
 import SearchBar from "../../components/SearchBar";
-import { useSearch } from "../../hooks/music.hooks";
+import { useSearch } from "../../hooks/search.hooks";
+import BottomNav from "@components/BottomNav";
+import { useAudioPlayer } from "@hooks/player.hooks";
 
-export function SearchScreen(){
+export function SearchScreen({ navigation }: any) {
   const { inputRef, setSearchQuery, results, loading } = useSearch();
+  const { selectTrack } = useAudioPlayer();
 
   return (
     <View style={{ flex: 1, padding: 10, paddingTop: 40 }}>
@@ -16,7 +19,7 @@ export function SearchScreen(){
         data={results}
         keyExtractor={(item) => item.videoUrl}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => console.log("Video URL:", item.videoUrl)}>
+          <TouchableOpacity onPress={async () => { await selectTrack({fileId: item.videoUrl, title: item.title, thumbnail: item.thumbnail}, navigation)}}>
             <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
               <Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
               <Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
@@ -24,6 +27,7 @@ export function SearchScreen(){
           </TouchableOpacity>
         )}
       />
+	<BottomNav navigation={navigation} active="Search" />
     </View>
   );
 };

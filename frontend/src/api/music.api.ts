@@ -29,3 +29,13 @@ export const streamMusic = async (musicId: string) => {
 		throw error;
 	}
 }
+
+export const getAllMusic = async () => {
+	try {
+		const response = await api.get("/music/all");
+		return response.data;
+	} catch (error: any) {
+		if (error.response) throw new Error(error.response.data.message);
+		throw error;
+	}
+}

@@ -14,7 +14,9 @@
 		"@screens/*": ["screens/*"],
 		"@styles/*": ["styles/*"],
 		"@types/*": ["types/*"],
-		"@utils/*": ["utils/*"]
+		"@utils/*": ["utils/*"],
+		"@config/*": ["config/*"],
+		"@services/*": ["services/*"],
 
 		// Make sure these match your Babel aliases
 	  }

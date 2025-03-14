@@ -22,20 +22,10 @@ export default function LoginScreen({ navigation }: any) {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>TUMSS</Text>
-
 			<TextInput style={styles.input} placeholder="Username" placeholderTextColor="#aaa" value={username} onChangeText={setUsername} />
-
 			<TextInput style={styles.input} placeholder="Password" placeholderTextColor="#aaa" value={password} onChangeText={setPassword} secureTextEntry />
-			<TouchableOpacity
-				style={styles.button}
-				onPress={() => {
-					login(username, password);
-				}}
-			>
-				<Text style={styles.buttonText}>Login</Text>
-			</TouchableOpacity>
+			<MyButton title="Login" onPress={() => login(username, password)} />
 			<MyButton title="Register" onPress={() => navigation.replace('Register')} />
-			<MyButton title="Get" onPress={handleGet} />
 		</View>
 	);
 }

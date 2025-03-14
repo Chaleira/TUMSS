@@ -1,22 +1,17 @@
 import React from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text, Alert, TouchableOpacity, Image } from 'react-native';
 import MyButton from 'components/MyButton';
+import BottomNav from 'components/BottomNav';
 import { getMainData } from '@api/user.api';
 import { useAuth } from '@hooks/auth.hooks';
-import { useState, useMemo } from "react";
-
-const ExpensiveCalculation = ({count}: any) => {
-	const expensiveResult = useMemo(() => {
-	  console.log("Calculating...");
-	  return count * 2;
-	}, [count]); // Recomputes only when count changes
-  
-	return <Text>Result: {expensiveResult}</Text>;
-  };
+import { useHome } from '@hooks/home.hooks';
+import { FlatList } from 'react-native-gesture-handler';
+import { useAudioPlayer } from '@hooks/player.hooks';
 
 export default function HomeScreen({ navigation }: any) {
   const { user, logout } = useAuth();
-  const [count, setCount] = useState(1);
+  const { songs } = useHome();
+  const { selectTrack } = useAudioPlayer();
 
   const handleGet = async () => {
 		try{
@@ -28,18 +23,26 @@ export default function HomeScreen({ navigation }: any) {
 	}
 
   return (
-	  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-		<View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      		<Text style={{ fontSize: 24 }}>Welcome {user?.username} !</Text>
+	  <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop:35 }}>
+      		{/* <Text style={{ fontSize: 24 }}>Welcome {user?.usejrname} !</Text> */}
       		<Text style={{ fontSize: 24 }}>Home Screen</Text>
-    	</View>
-		<View style={{paddingBottom: 100}}>
+		<View style={{ flex: 1, paddingTop: 0, alignItems: "center" }}>
+		<FlatList data={songs} keyExtractor={(item) => item.fileId} renderItem={({ item }) => (
+			<TouchableOpacity onPress={async () => { await selectTrack(item, navigation)}}>
+				<View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingLeft: 0 }}>
+					<Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
+					<Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
+				</View>
+			</TouchableOpacity>
+		)}>
+		</FlatList>
+			</View>
+		<View style={{paddingBottom: 50, flexDirection: "row"}}>
 			<MyButton title="Logout" onPress={() => logout()} />
 			<MyButton title="Get" onPress={handleGet} />
-			<MyButton title="count" onPress={() => setCount(count + 1)} />
-			<ExpensiveCalculation count={count} />
-			<MyButton title="Get" onPress={()=>{navigation.navigate('Player')}} />
+			{/* <MyButton title="Player Screen" onPress={()=>{navigation.navigate('Player')}} /> */}
 		</View>
+		<BottomNav navigation={navigation} active="Home" />
 	</View>
 	
   );

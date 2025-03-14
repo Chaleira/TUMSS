@@ -24,7 +24,7 @@ export const musicService = (() => {
 		}
 	};
 
-	const getMusicInfo = async (videoId: string): Promise<{ title: string; artist: string }> => {
+	const getMusicInfo = async (videoId: string): Promise<{ title: string; thumbnail: string }> => {
 		try {
 			const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
 				params: {
@@ -35,37 +35,38 @@ export const musicService = (() => {
 			});
 			const video = response.data.items[0].snippet;
 			const title = video.title;
-			const artist = video.channelTitle;
+			// const artist = video.channelTitle;
+			const thumbnail = video.thumbnails.high.url || video.thumbnails.default.url;
 
-			return normalizeTitle(title, artist);
+			return {title, thumbnail };
 		} catch (error: any) {
 			console.error(error.message);
 			throw new Error("Error fetching video info");
 		}
 	};
 
-	const normalizeTitle = (title: string, artist: string): { title: string; artist: string } => {
-		try {
-			const normalizedArtist: string = artist.toLowerCase();
-			let normalizedTitle: string = title.toLowerCase();
+	// const normalizeTitle = (title: string, artist: string): { title: string; artist: string } => {
+	// 	try {
+	// 		const normalizedArtist: string = artist.toLowerCase();
+	// 		let normalizedTitle: string = title.toLowerCase();
 
-			const redex = new RegExp(`\\b${normalizedArtist}\\b`, "g");
-			let splitTitle = normalizedTitle.split("-");
-			let cleanedTitle = splitTitle[1].replace(redex, "").trim();
+	// 		const redex = new RegExp(`\\b${normalizedArtist}\\b`, "g");
+	// 		let splitTitle = normalizedTitle.split("-");
+	// 		let cleanedTitle = splitTitle[1].replace(redex, "").trim();
 
-			let cleanedArtist = normalizedArtist.charAt(0).toUpperCase() + normalizedArtist.slice(1);
-			cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
-			return { title: cleanedTitle, artist: cleanedArtist };
-		} catch (error: any) {
-			console.error(error.message);
-			throw new Error("Error normalizing title and artist name");
-		}
-	};
+	// 		let cleanedArtist = normalizedArtist.charAt(0).toUpperCase() + normalizedArtist.slice(1);
+	// 		cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
+	// 		return { title: cleanedTitle, artist: cleanedArtist };
+	// 	} catch (error: any) {
+	// 		console.error(error.message);
+	// 		throw new Error("Error normalizing title and artist name");
+	// 	}
+	// };
 
 	// After this return statement, all methods are public
 	return {
 		fetchMusicFromYouTube: async (query: string): Promise<any[]> => {
-			const maxResults = 20;
+			const maxResults = 1;
 
 			try {
 				const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
@@ -78,7 +79,6 @@ export const musicService = (() => {
 						key: youtube_api_key,
 					},
 				});
-
 				return response.data.items.map((item: any) => ({
 					title: item.snippet.title,
 					videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`,
@@ -122,13 +122,24 @@ export const musicService = (() => {
 				const songInfo = await getMusicInfo(videoId);
 				const song = await Song.create({
 					title: songInfo.title,
-					artist: songInfo.artist,
+					// artist: songInfo.artist,
 					fileId: videoId,
+					thumbnail: songInfo.thumbnail,
 				});
 				return song;
 			} catch (error: any) {
 				console.error(error.message);
 				throw new Error("Error creating music");
+			}
+		},
+
+		getAllSongs: async (): Promise<Song[]> => {
+			try {
+				const songs = await Song.findAll(); // Fetch all songs
+				return songs;
+			} catch (error: any) {
+				console.error(error.message);
+				throw new Error("Error retrieving songs");
 			}
 		},
 	};
