@@ -17,7 +17,6 @@
     "@react-native-masked-view/masked-view": "0.3.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/stack": "^7.1.1",
-    "axios": "^1.8.1",
     "expo": "~52.0.37",
     "expo-av": "^15.0.2",
     "expo-secure-store": "^14.0.1",
@@ -32,6 +31,7 @@
     "react-native-screens": "~4.4.0"
   },
   "devDependencies": {
+    "axios": "^1.8.1",
     "@babel/core": "^7.25.2",
     "@react-native-community/cli": "latest",
     "@types/lodash": "^4.17.15",
