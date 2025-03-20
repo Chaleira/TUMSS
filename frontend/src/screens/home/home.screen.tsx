@@ -41,26 +41,23 @@ export default function HomeScreen({ navigation }: any) {
 				</TouchableOpacity>
 				{/* <Text style={{ fontSize: 24 }}>Lastly Played</Text> */}
 			</View>
-			<FlatList
-				data={songs}
-				keyExtractor={(item) => item.fileId}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						onPress={async () => {
-							await selectTrack(item, navigation);
-						}}
-					>
-						<View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingLeft: 0 }}>
-							<Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
-							<Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
-						</View>
-					</TouchableOpacity>
-				)}
-			></FlatList>
-			{/* <View style={{ paddingBottom: 50, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-				<MyButton title="Logout" onPress={() => logout()} />
-				<MyButton title="Get" onPress={handleGet} />
-			</View> */}
+				<FlatList
+					data={songs}
+					keyExtractor={(item) => item.fileId}
+					contentContainerStyle={{ paddingBottom: 45 }}
+					renderItem={({ item }) => (
+						<TouchableOpacity
+							onPress={async () => {
+								await selectTrack(item, navigation);
+							}}
+						>
+							<View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingLeft: 0 }}>
+								<Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
+								<Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
+							</View>
+						</TouchableOpacity>
+					)}
+				></FlatList>
 			<BottomNav navigation={navigation} active="Home" />
 		</View>
 	);
