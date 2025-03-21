@@ -5,11 +5,12 @@ import { Ionicons } from "@expo/vector-icons";
 interface Props {
   icon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export default function MediaButton({ icon, onPress }: Props) {
+export default function MediaButton({ icon, onPress, disabled }: Props) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity style={styles.button} onPress={onPress} disabled={disabled}>
       <View style={styles.iconContainer}>
         <Ionicons name={icon} size={40} color="grey" />
       </View>

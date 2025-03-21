@@ -1,16 +1,17 @@
 import { getAllMusic } from "@api/music.api";
 import { useEffect, useState } from "react";
+import { useAudioPlayer } from "./player.hooks";
 
 
 export const useHome = () => {
-	const [songs, setSongs] = useState<{title: string; artist: string; thumbnail: string; fileId: string;}[]>([]);
+	const { playlist, setPlaylist } = useAudioPlayer();
 	const [loading, setLoading] = useState(false);
 
 	const fetchSongs = async () => {
 		setLoading(true);
 		try {
 			const response = await getAllMusic();
-			setSongs(response);
+			setPlaylist(response);
 		} catch (error: any) {
 			console.error("API Error:", error.message);
 		} finally {
@@ -23,5 +24,5 @@ export const useHome = () => {
 	}
 		, []);
 
-	return { songs, loading };
+	return { playlist, loading };
 }

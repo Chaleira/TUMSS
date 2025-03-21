@@ -8,14 +8,19 @@ import { useHome } from "@hooks/home.hooks";
 import { FlatList } from "react-native-gesture-handler";
 import { useAudioPlayer } from "@hooks/player.hooks";
 import { Ionicons } from "@expo/vector-icons";
+import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function HomeScreen({ navigation }: any) {
-	const { user, logout } = useAuth();
-	const { songs } = useHome();
-	const { selectTrack } = useAudioPlayer();
+	const { logout } = useAuth();
+	const { playlist } = useHome();
+	const { setPlaylistIndex } = useAudioPlayer();
 
 	const handleGet = async () => {
 		try {
+			await SecureStore.deleteItemAsync('authToken');
+			await AsyncStorage.removeItem('user');
 			const data = await getMainData();
 			Alert.alert("Get", data);
 		} catch (error: any) {
@@ -42,13 +47,15 @@ export default function HomeScreen({ navigation }: any) {
 				{/* <Text style={{ fontSize: 24 }}>Lastly Played</Text> */}
 			</View>
 				<FlatList
-					data={songs}
+					data={playlist}
 					keyExtractor={(item) => item.fileId}
 					contentContainerStyle={{ paddingBottom: 45 }}
 					renderItem={({ item }) => (
 						<TouchableOpacity
 							onPress={async () => {
-								await selectTrack(item, navigation);
+								setPlaylistIndex(playlist.indexOf(item));
+								navigation.navigate("Player");
+								// await selectTrack(item, navigation);
 							}}
 						>
 							<View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingLeft: 0 }}>
