@@ -6,14 +6,16 @@ import * as SecureStore from "expo-secure-store";
 import { API_ENDPOINT, AUTH_TOKEN, MAIN_SEARCH_URL } from "@config/config.index";
 import { Music } from "types/music.types";
 import { set } from "lodash";
+import { getAllMusic } from "@api/music.api";
 
 // Define types
 interface AudioPlayerContextType {
-	selectTrack: (song: Music, navigation: any) => void;
-	loadTrack: (song: Music, shouldPlay:boolean) => Promise<void>;
+	selectTrack: (song: Music) => void;
+	loadTrack: (song: Music, shouldPlay: boolean) => Promise<void>;
 	playTrack: () => Promise<void>;
 	stopTrack: () => Promise<void>;
 	unloadTrack: () => Promise<void>;
+	onSliderValueChange: (value: number) => void;
 	isPlaying: boolean;
 	currentTrack: { title: string; thumbnail: string } | null;
 	sliderValue: number;
@@ -24,28 +26,38 @@ interface AudioPlayerContextType {
 	setPlaylistIndex: React.Dispatch<React.SetStateAction<number>>;
 	playlistIndex: number;
 	setLoad: React.Dispatch<React.SetStateAction<boolean>>;
+	duration: number;
 }
 
 // Create Context
 export const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
 
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const soundRef = useRef<Audio.Sound | null>(null); // Persistent sound instance
+	const [music, setMusic] = useState<Audio.Sound | null>(null); // Persistent sound instance
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTrack, setCurrentTrack] = useState<Music | null>(null);
 	const [sliderValue, setSliderValue] = useState(0);
 	const [playlist, setPlaylist] = useState<Music[]>([]);
 	const [playlistIndex, setPlaylistIndex] = useState<number>(-1);
 	const [load, setLoad] = useState<boolean>(false);
+	const [duration, setDuration] = useState<number>(0);
 
 	// Function to load a track
+
+	const onPlaybackStatusUpdate = (status: any) => {
+		if (status.isLoaded) {
+			setSliderValue(status.positionMillis);
+			setDuration(status.durationMillis);
+		}
+	};
+
 	const loadTrack = async (song: Music, shouldPlay: boolean) => {
 		try {
 			// Unload any existing track
-			if (soundRef.current) {
-				await soundRef.current.stopAsync();
-				await soundRef.current.unloadAsync();
-				soundRef.current = null;
+			if (music) {
+				await music.stopAsync();
+				await music.unloadAsync();
+				setMusic(null);
 			}
 
 			if (song === undefined) return;
@@ -56,12 +68,18 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 			Audio.setAudioModeAsync({ staysActiveInBackground: true });
 
-			const { sound } = await Audio.Sound.createAsync({ uri: API_MUSIC_STREAM + parsedUri, headers: { Authorization: `Bearer ${token}` } }, { shouldPlay: shouldPlay });
+			const { sound } = await Audio.Sound.createAsync(
+				{
+					uri: API_MUSIC_STREAM + parsedUri,
+					headers: { Authorization: `Bearer ${token}` },
+				},
+				{ shouldPlay: shouldPlay },
+				onPlaybackStatusUpdate
+			);
 
-			if (shouldPlay)
-				setIsPlaying(true);
+			if (shouldPlay) setIsPlaying(true);
 			setCurrentTrack(song);
-			soundRef.current = sound;
+			setMusic(sound);
 		} catch (error) {
 			console.error("Error loading audio:", error);
 		}
@@ -69,11 +87,15 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 	// Function to play the loaded track
 	const playTrack = async () => {
-		if (soundRef.current) {
+		if (music) {
+			music.setOnPlaybackStatusUpdate((status) => {
+				if (status.isLoaded && !status.isBuffering && status.shouldPlay )
+					setLoad(false);
+			});
 			setIsPlaying(true);
-			await soundRef.current.playAsync();
+			await music.playAsync();
 
-			soundRef.current.setOnPlaybackStatusUpdate((status) => {
+			music.setOnPlaybackStatusUpdate((status) => {
 				if (status.isLoaded && status.didJustFinish) {
 					setPlaylistIndex(playlistIndex + 1);
 					setIsPlaying(false);
@@ -86,62 +108,59 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 	// Function to stop the current track
 	const stopTrack = async () => {
-		if (soundRef.current) {
-			await soundRef.current.pauseAsync();
+		if (music) {
+			await music.pauseAsync();
 			setIsPlaying(false);
 		}
 	};
 
 	// Function to unload the track
 	const unloadTrack = async () => {
-		if (soundRef.current) {
-			await soundRef.current.unloadAsync();
-			soundRef.current = null;
+		if (music) {
+			await music.unloadAsync();
+			setMusic(null);
 			setIsPlaying(false);
 			setCurrentTrack(null);
 		}
 	};
 
+	const onSliderValueChange = async (value: number) => {
+		if (!music) return;
+
+		await music.setPositionAsync(value);
+		setSliderValue(value);
+	};
+
 	// Cleanup when unmounting
 	useEffect(() => {
 		return () => {
-			if (soundRef.current) {
-				soundRef.current.unloadAsync();
+			if (music) {
+				music.unloadAsync();
 			}
 		};
 	}, []);
 
 	useEffect(() => {
-		if(playlist){
-			loadTrack(playlist[0], false)
-		}
-	}, [playlist]);
-
-	useEffect(() => {
-		if (load) return;
-		setLoad(true);
 		if (playlist.length > 0) {
-			if (playlistIndex < 0){
+			if (playlistIndex < 0) {
 				setPlaylistIndex(playlist.length - 1);
 				setLoad(false);
 				return;
-			}
-			else if (playlistIndex >= playlist.length){
+			} else if (playlistIndex >= playlist.length) {
 				setPlaylistIndex(0);
 				setLoad(false);
 				return;
 			}
-			selectTrack(playlist[playlistIndex], null);
+			selectTrack(playlist[playlistIndex]);
 		}
-		setLoad(false);
 	}, [playlistIndex]);
 
-	const selectTrack = (song: Music, navigation: any) => {
-
-		loadTrack(song, true);
-		if (navigation)
-			navigation.navigate("Player");
-		 // Adjust delay as needed
+	const selectTrack = async (song: Music) => {
+		if (load) return;
+		setLoad(true);
+		stopTrack();
+		await loadTrack(song, true);
+		setLoad(false);
 	};
 
 	return (
@@ -162,6 +181,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 				setPlaylistIndex,
 				playlistIndex,
 				setLoad,
+				onSliderValueChange,
+				duration,
 			}}
 		>
 			{children}

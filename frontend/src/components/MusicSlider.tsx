@@ -10,6 +10,18 @@ interface Props {
   onValueChange: (value: number) => void;
 }
 
+
+const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60); // Get the total minutes
+    const seconds = Math.floor(timeInSeconds % 60); // Get the remaining seconds
+
+    // Pad the minutes and seconds with leading zeros if necessary
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+};
+
 export default function MusicSlider({
   minimumValue = 0,
   maximumValue = 100,
@@ -20,7 +32,7 @@ export default function MusicSlider({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.valueText}>{value}</Text>
+      {/* <Text style={styles.valueText}>{value}</Text> */}
       <Slider
         style={styles.slider}
         minimumValue={minimumValue}
@@ -32,6 +44,7 @@ export default function MusicSlider({
         maximumTrackTintColor="#d3d3d3"
         thumbTintColor="#1EB1FC"
       />
+	  <Text> {formatTime(Math.floor(value / 1000))} / {formatTime(Math.floor(maximumValue / 1000))}</Text>
     </View>
   );
 }

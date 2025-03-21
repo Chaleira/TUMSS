@@ -19,7 +19,7 @@ export function SearchScreen({ navigation }: any) {
         data={results}
         keyExtractor={(item) => item.videoUrl}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={async () => { await selectTrack({fileId: item.videoUrl, title: item.title, thumbnail: item.thumbnail}, navigation)}}>
+          <TouchableOpacity onPress={() => { selectTrack({fileId: item.videoUrl, title: item.title, thumbnail: item.thumbnail}); navigation.navigate("Player");}}>
             <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
               <Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
               <Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
