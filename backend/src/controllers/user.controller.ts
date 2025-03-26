@@ -42,7 +42,7 @@ export const userController = {
 			return;
 		}
 
-		const token = jwt.sign({ id: user.id }, jwt_secret, { expiresIn: "1h" });
+		const token = jwt.sign({ id: user.id }, jwt_secret, { expiresIn: "6h" });
 
 		res.status(200).json({ user: user, token: token });
 	},

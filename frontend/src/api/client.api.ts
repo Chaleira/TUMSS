@@ -5,10 +5,11 @@ import { useAuth } from "@hooks/auth.hooks";
 
 console.log(API_ENDPOINT);
 
-const logout = async () => {
-	const { logout } = useAuth();
-	logout();
-  };
+// const logoutt = async () => {
+// 	const { logout } = useAuth();
+// 	console.log("Logging out due to 401/403");
+// 	logout();
+//   };
 
 // Create an Axios instance
 const api = axios.create({
@@ -26,16 +27,20 @@ api.interceptors.request.use(async (config) => {
 	return config;
 });
 
-api.interceptors.response.use(
-	(response) => response, // If response is OK, return it
-	async (error) => {
-		const { response } = error;
+export const setupInterceptors = (logout: any) => {
+	api.interceptors.response.use(
+		(response) => response, // If response is OK, return it
+		async (error) => {
+			const { response } = error;
+			console.log("Response Status: ", response?.status);
 
-		if (response?.status === 401 || response?.status === 403) {
-			logout();
+			if (response?.status === 401 || response?.status === 403) {
+				logout(); // Call logout from context
+			}
+
+			return Promise.reject(error);
 		}
-		return Promise.reject(error);
-	}
-);
+	);
+};
 
 export default api;

@@ -35,7 +35,6 @@ export const getAllMusic = async () => {
 		const response = await api.get("/music/all");
 		return response.data;
 	} catch (error: any) {
-		if (error.response) throw new Error(error.response.data.message);
-		throw error;
+		if (error.response) console.log(error.response.data.message);
 	}
 }

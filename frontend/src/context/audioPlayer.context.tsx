@@ -57,7 +57,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 			if (music) {
 				await music.stopAsync();
 				await music.unloadAsync();
-				setMusic(null);
+				// setMusic(null);
 			}
 
 			if (song === undefined) return;
@@ -116,6 +116,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 	// Function to unload the track
 	const unloadTrack = async () => {
+		console.log("Unloading track");
+		console.log(music);
 		if (music) {
 			await music.unloadAsync();
 			setMusic(null);
@@ -133,12 +135,18 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 	// Cleanup when unmounting
 	useEffect(() => {
+	
 		return () => {
-			if (music) {
-				music.unloadAsync();
-			}
+			(async () => {
+				console.log("Cleaning up audio player Context", music);
+				if (music) {
+					await music.stopAsync();
+					await music.unloadAsync();
+					console.log("Track unloaded successfully");
+				}
+			})();
 		};
-	}, []);
+	}, [music]);
 
 	useEffect(() => {
 		if (playlist.length > 0) {
