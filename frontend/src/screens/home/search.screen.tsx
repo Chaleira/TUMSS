@@ -4,6 +4,7 @@ import SearchBar from "../../components/SearchBar";
 import { useSearch } from "../../hooks/search.hooks";
 import BottomNav from "@components/BottomNav";
 import { useAudioPlayer } from "@hooks/player.hooks";
+import MusicList from "@components/MusicList";
 
 export function SearchScreen({ navigation }: any) {
   const { inputRef, setSearchQuery, results, loading } = useSearch();
@@ -27,6 +28,7 @@ export function SearchScreen({ navigation }: any) {
           </TouchableOpacity>
         )}
       />
+	  {/* <MusicList playlist={results} onpress/> */}
 	<BottomNav navigation={navigation} active="Search" />
     </View>
   );

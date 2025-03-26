@@ -10,6 +10,7 @@ export const useHome = () => {
 	const fetchSongs = async () => {
 		setLoading(true);
 		try {
+			if (playlist.length > 0) return;
 			const response = await getAllMusic();
 			setPlaylist(response);
 		} catch (error: any) {
