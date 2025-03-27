@@ -40,7 +40,7 @@ export function useSearch() {
       }
     };
 
-    const delayDebounce = setTimeout(fetchData, 500);
+    const delayDebounce = setTimeout(fetchData, 1000);
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 

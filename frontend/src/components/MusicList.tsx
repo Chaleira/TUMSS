@@ -5,10 +5,11 @@ import { Music } from "types/music.types";
 import { Ionicons } from "@expo/vector-icons";
 interface MusicListProps {
   playlist: Music[];
-  onPress?: (item: Music) => void;
+  onPressMusic?: (item: Music) => void;
+  onPressAdd?: (item: Music) => void;
 }
 
-const MusicList: React.FC<MusicListProps> = ({ playlist, onPress }) => {
+const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAdd }) => {
 
 	const onAdd = (item: Music) => {
 		console.log("Add", item);
@@ -23,7 +24,7 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPress }) => {
       renderItem={({ item }) => (
 		// console.log("Thumbnail", item.thumbnail),
         <TouchableOpacity
-          onPress={() => onPress && onPress(item)}
+          onPress={() => onPressMusic && onPressMusic(item)}
         >
           <View style={styles.itemContainer}>
             <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />

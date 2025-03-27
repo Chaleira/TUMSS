@@ -14,7 +14,7 @@ import MusicList from "@components/MusicList";
 
 export default function HomeScreen({ navigation }: any) {
 	const { logout } = useAuth();
-	const { playlist } = useHome();
+	const { homePlaylist } = useHome();
 	const { setPlaylistIndex } = useAudioPlayer();
 
 	const handleGet = async () => {
@@ -29,9 +29,9 @@ export default function HomeScreen({ navigation }: any) {
 	};
 
 	return (
-		<View style={{ flex: 1, paddingLeft: 0 }}>
+		<View style={{ flex: 1, paddingLeft: 10 }}>
 			<View style={{ flexDirection: "row", paddingTop: 35, alignItems: "flex-end" }}>
-				<Text style={{ fontSize: 24 }}>Lastly Played</Text>
+				<Text style={{ fontSize: 24 }}>Community Music</Text>
 				<TouchableOpacity
 					onPress={handleGet}
 					style={{ marginLeft: "auto", paddingRight: 10 }}
@@ -45,11 +45,10 @@ export default function HomeScreen({ navigation }: any) {
 					<Ionicons name="log-out" size={28} />
 				</TouchableOpacity>
 			</View>
-				<MusicList playlist={playlist} onPress={async (item) => {
-							// console.log("Item", item.id);
-							setPlaylistIndex(playlist.indexOf(item));
+				<MusicList playlist={homePlaylist} onPressMusic={async (item) => {
+							setPlaylistIndex(homePlaylist.indexOf(item));
 							navigation.navigate("Player");
-						  }}/>
+				}}/>
 			<BottomNav navigation={navigation} active="Home" />
 		</View>
 	);

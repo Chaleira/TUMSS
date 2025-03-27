@@ -12,16 +12,19 @@ export function SearchScreen({ navigation }: any) {
   const { inputRef, setSearchQuery, results, loading } = useSearch();
   const { selectTrack } = useAudioPlayer();
 
-  const handleOnPress = async (item: Music) => {
+  const handleOnPressAdd = async (item: Music) => {
 	try {
 		// const response = await createMusic(item.fileId);
-		selectTrack(item);
-		navigation.navigate("Player");
 		// console.log("Response", response);
 	}
 	catch (error: any) {
 		console.log("API Error:", error.message);
 	}
+	};
+
+	const handleOnPressMusic = (item: Music) => {
+		selectTrack(item);
+		navigation.navigate("Player");
 	};
 
   return (
@@ -30,7 +33,7 @@ export function SearchScreen({ navigation }: any) {
 
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
-	  <MusicList playlist={results} onPress={handleOnPress}/>
+	  <MusicList playlist={results} onPressMusic={handleOnPressMusic} onPressAdd={handleOnPressAdd}/>
 	<BottomNav navigation={navigation} active="Search" />
     </View>
   );

@@ -1,18 +1,22 @@
 import { getAllMusic } from "@api/music.api";
 import { useEffect, useState } from "react";
 import { useAudioPlayer } from "./player.hooks";
+import { set } from "lodash";
+import { Music } from "types/music.types";
 
 
 export const useHome = () => {
 	const { playlist, setPlaylist } = useAudioPlayer();
 	const [loading, setLoading] = useState(false);
+	const [homePlaylist, setHomePlaylist] = useState<Music[]>([]);
 
 	const fetchSongs = async () => {
 		setLoading(true);
 		try {
-			if (playlist.length > 0) return;
 			const response = await getAllMusic();
-			setPlaylist(response);
+			setHomePlaylist(response);
+			if (playlist.length === 0)
+				setPlaylist(response);
 		} catch (error: any) {
 			console.error("API Error:", error.message);
 		} finally {
@@ -25,5 +29,5 @@ export const useHome = () => {
 	}
 		, []);
 
-	return { playlist, loading };
+	return { loading, homePlaylist };
 }
