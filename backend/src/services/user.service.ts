@@ -37,11 +37,14 @@ export const userService = (() => {
 			}
 		},
 
-		validateUser: async (username: string, password: string): Promise<User | null> => {
+		validateUser: async (username: string, password: string): Promise<Omit<User, "password"> | null> => {
 			try {
 				const user = await userService.findUserByUsername(username);
 				if (!user) return null;
-				if (await bcrypt.compare(password, user.password)) return user;
+				if (await bcrypt.compare(password, user.password)) {
+					const { password, ...userWithoutPassword } = user.get();
+					return userWithoutPassword;
+				}
 				return null;
 			} catch (error: any) {
 				console.error(error.message);
