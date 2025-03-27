@@ -98,4 +98,26 @@ export const playlistController = {
 			res.status(500).json({ message: error.message });
 		}
 	},
+
+	getPlaylistSongs: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+		const { playlistId } = req.params;
+
+		if (!playlistId) {
+			res.status(400).json({ message: "Playlist Id is required." });
+			return;
+		}
+
+		try {
+			const songs = await playlistService.getPlaylistSongs(parseInt(playlistId));
+			if (!songs) {
+				res.status(404).json({ message: "Songs not found." });
+				return;
+			}
+
+			res.status(200).json(songs);
+		} catch (error: any) {
+			console.error(error.message);
+			res.status(500).json({ message: "Error getting playlist songs." });
+		}
+	}
 };

@@ -79,5 +79,28 @@ export const playlistService = (() => {
 				throw new Error("An unexpected error occurred.");
 			}
 		},
+
+		getPlaylistSongs: async (playlistId: number): Promise<Song[] | null> => {
+			try {
+				const playlistSongs = await PlaylistSong.findAll({
+					where: {
+						playlistId,
+					},
+				});
+
+				const songIds = playlistSongs.map((playlistSong) => playlistSong.songId);
+
+				const songs = await Song.findAll({
+					where: {
+						id: songIds,
+					},
+				});
+
+				return songs;
+			} catch (error: any) {
+				console.error(error.message);
+				throw new Error("Error getting playlist songs");
+			}
+		}
 	};
 })();
