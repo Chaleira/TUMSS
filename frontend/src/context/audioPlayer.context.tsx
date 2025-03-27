@@ -97,8 +97,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 			music.setOnPlaybackStatusUpdate((status) => {
 				if (status.isLoaded && status.didJustFinish) {
-					setPlaylistIndex(playlistIndex + 1);
 					setIsPlaying(false);
+					setPlaylistIndex(playlistIndex + 1);
 				}
 			});
 		} else {

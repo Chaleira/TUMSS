@@ -49,3 +49,13 @@ export const removeSongFromPlaylist = async (songId: string, playlistId: string)
 		throw error;
 	}
 }
+
+export const getPlaylistSongs = async (playlistId: string) => {
+	try {
+		const response = await api.get(`/playlist/getPlaylistSongs/${playlistId}`);
+		return response.data;
+	} catch (error: any) {
+		if (error.response) throw new Error(error.response.data.message);
+		throw error;
+	}
+}

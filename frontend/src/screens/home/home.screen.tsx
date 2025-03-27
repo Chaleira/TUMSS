@@ -28,6 +28,14 @@ export default function HomeScreen({ navigation }: any) {
 		}
 	};
 
+	const handleAdd = async () => {
+		try {
+			console.log("Add");
+		} catch (error: any) {
+			Alert.alert("Error", error.message);
+		}
+	}
+
 	return (
 		<View style={{ flex: 1, paddingLeft: 10 }}>
 			<View style={{ flexDirection: "row", paddingTop: 35, alignItems: "flex-end" }}>
@@ -48,7 +56,7 @@ export default function HomeScreen({ navigation }: any) {
 				<MusicList playlist={homePlaylist} onPressMusic={async (item) => {
 							setPlaylistIndex(homePlaylist.indexOf(item));
 							navigation.navigate("Player");
-				}}/>
+				}} onPressAdd={handleAdd}/>
 			<BottomNav navigation={navigation} active="Home" />
 		</View>
 	);

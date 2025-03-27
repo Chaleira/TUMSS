@@ -3,20 +3,19 @@ import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react
 import { useNavigation } from "@react-navigation/native";
 import { Music } from "types/music.types";
 import { Ionicons } from "@expo/vector-icons";
-interface MusicListProps {
+import { add } from "lodash";
+export interface MusicListProps {
   playlist: Music[];
-  onPressMusic?: (item: Music) => void;
+  onPressMusic: (item: Music) => void;
   onPressAdd?: (item: Music) => void;
+  addVisible?: boolean;
 }
 
-const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAdd }) => {
+const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAdd, addVisible }) => {
 
-	const onAdd = (item: Music) => {
-		console.log("Add", item);
-	};
-
+	addVisible = addVisible === undefined ? true : false;
   return (
-	<View style={{ flex: 1}}>
+	<View>
     <FlatList
       data={playlist}
       keyExtractor={(item) => item.fileId}
@@ -24,16 +23,18 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAd
       renderItem={({ item }) => (
 		// console.log("Thumbnail", item.thumbnail),
         <TouchableOpacity
-          onPress={() => onPressMusic && onPressMusic(item)}
+          onPress={() => onPressMusic(item)}
         >
           <View style={styles.itemContainer}>
             <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
             <View style={styles.textContainer}>
 				<Text style={styles.title}>{item.title}</Text>
 			</View>
-			<TouchableOpacity style={styles.addButton} onPress={() => onAdd(item)}>
-				<Ionicons name="add" size={24} color="white" />
-			</TouchableOpacity>
+			{addVisible && (
+				<TouchableOpacity style={styles.addButton} onPress={() => onPressAdd && onPressAdd(item)}>
+					<Ionicons name="add" size={24} color="white" />
+				</TouchableOpacity>
+			)}
           </View>
         </TouchableOpacity>
       )}
