@@ -4,6 +4,8 @@ import path from "path";
 import { youtube_api_key, DOWNLOADS_FOLDER } from "../config/config.index";
 import { exec } from "child_process";
 import Song from "../models/song.model";
+import puppeteer from "puppeteer";
+// import cheerio from "cheerio";
 
 export const musicService = (() => {
 	// This is a private method
@@ -24,69 +26,95 @@ export const musicService = (() => {
 		}
 	};
 
-	const getMusicInfo = async (videoId: string): Promise<{ title: string; thumbnail: string }> => {
-		try {
-			const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
-				params: {
-					part: "snippet",
-					id: videoId,
-					key: youtube_api_key,
-				},
-			});
-			const video = response.data.items[0].snippet;
-			const title = video.title;
-			// const artist = video.channelTitle;
-			const thumbnail = video.thumbnails.high.url || video.thumbnails.default.url;
+	// const getMusicInfo = async (videoId: string): Promise<{ title: string; thumbnail: string }> => {
+	// 	try {
+	// 		const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
+	// 			params: {
+	// 				part: "snippet",
+	// 				id: videoId,
+	// 				key: youtube_api_key,
+	// 			},
+	// 		});
+	// 		const video = response.data.items[0].snippet;
+	// 		const title = video.title;
+	// 		// const artist = video.channelTitle;
+	// 		const thumbnail = video.thumbnails.high.url || video.thumbnails.default.url;
 
-			return {title, thumbnail };
+	// 		return {title, thumbnail };
+	// 	} catch (error: any) {
+	// 		console.error(error.message);
+	// 		throw new Error("Error fetching video info");
+	// 	}
+	// };
+
+	const getMusicInfo = async (videoId: string): Promise<{ title: string; thumbnail: string }> => {
+		const browser = await puppeteer.launch({ headless: true });
+		const page = await browser.newPage();
+		const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+		try {
+			await page.goto(videoUrl, { waitUntil: "domcontentloaded" });
+			console.log("Video URL", videoUrl);
+
+			await page.waitForSelector('meta[property="og:title"]');
+
+			console.log("Titleaaa");
+			const videoDetails = await page.evaluate((videoId) => {
+				const titleElement = document.querySelector('meta[property="og:title"]');
+				const title = titleElement ? titleElement.getAttribute("content") || "Unknown Title" : "Unknown Title";
+				const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+				return { title, thumbnail };
+			}, videoId);
+
+			return videoDetails;
 		} catch (error: any) {
 			console.error(error.message);
 			throw new Error("Error fetching video info");
 		}
 	};
 
-	// const normalizeTitle = (title: string, artist: string): { title: string; artist: string } => {
-	// 	try {
-	// 		const normalizedArtist: string = artist.toLowerCase();
-	// 		let normalizedTitle: string = title.toLowerCase();
-
-	// 		const redex = new RegExp(`\\b${normalizedArtist}\\b`, "g");
-	// 		let splitTitle = normalizedTitle.split("-");
-	// 		let cleanedTitle = splitTitle[1].replace(redex, "").trim();
-
-	// 		let cleanedArtist = normalizedArtist.charAt(0).toUpperCase() + normalizedArtist.slice(1);
-	// 		cleanedTitle = cleanedTitle.charAt(0).toUpperCase() + cleanedTitle.slice(1);
-	// 		return { title: cleanedTitle, artist: cleanedArtist };
-	// 	} catch (error: any) {
-	// 		console.error(error.message);
-	// 		throw new Error("Error normalizing title and artist name");
-	// 	}
-	// };
-
 	// After this return statement, all methods are public
 	return {
-		fetchMusicFromYouTube: async (query: string): Promise<Song[]> => {
-			const maxResults = 1;
+		fetchMusicFromYouTube: async (query: string): Promise<any[]> => {
+			const browser = await puppeteer.launch({ headless: true });
+			const page = await browser.newPage();
+			const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query + " official music")}`;
 
 			try {
-				const response = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
-					params: {
-						part: "snippet",
-						q: query + " oficial music",
-						type: "video",
-						maxResults,
-						videoCategoryId: 10, // Music category
-						key: youtube_api_key,
-					},
+				// Go to the YouTube search page
+				await page.goto(searchUrl, { waitUntil: "domcontentloaded" });
+
+				// Wait for the first video results to load
+				await page.waitForSelector("ytd-video-renderer");
+
+				// Extract video data from the page
+				const results = await page.evaluate(() => {
+					const videoElements = document.querySelectorAll("ytd-video-renderer");
+					return Array.from(videoElements)
+						.map((video) => {
+							const titleElement = video.querySelector("#video-title");
+
+							const title = titleElement ? titleElement.textContent?.trim() : "Unknown Title";
+							const fileId = titleElement instanceof HTMLAnchorElement ? new URL(titleElement.href).searchParams.get("v") : "";
+							const thumbnail = `https://i.ytimg.com/vi/${fileId}/hqdefault.jpg`;
+
+							return {
+								title,
+								fileId,
+								thumbnail,
+							};
+						})
+						.filter((video) => video.fileId); // Filter out any videos without fileId
 				});
-				return response.data.items.map((item: any) => ({
-					title: item.snippet.title,
-					fileId: item.id.videoId,
-					thumbnail: item.snippet.thumbnails.high.url,
-				}));
+
+				// console.log("Results", results);
+				return results; // Return only the first result
 			} catch (error: any) {
-				console.error(error.message);
-				throw new Error("Error fetching videos from YouTube");
+				console.error("Error scraping YouTube:", error.message);
+				throw new Error("Error scraping YouTube");
+			} finally {
+				await browser.close();
 			}
 		},
 
@@ -122,7 +150,6 @@ export const musicService = (() => {
 				const songInfo = await getMusicInfo(videoId);
 				const song = await Song.create({
 					title: songInfo.title,
-					// artist: songInfo.artist,
 					fileId: videoId,
 					thumbnail: songInfo.thumbnail,
 				});

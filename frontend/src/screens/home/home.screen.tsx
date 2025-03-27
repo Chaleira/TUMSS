@@ -46,7 +46,7 @@ export default function HomeScreen({ navigation }: any) {
 				</TouchableOpacity>
 			</View>
 				<MusicList playlist={playlist} onPress={async (item) => {
-							console.log("Item", item.id);
+							// console.log("Item", item.id);
 							setPlaylistIndex(playlist.indexOf(item));
 							navigation.navigate("Player");
 						  }}/>

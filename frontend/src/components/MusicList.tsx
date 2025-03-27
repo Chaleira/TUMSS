@@ -21,6 +21,7 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPress }) => {
       keyExtractor={(item) => item.fileId}
       contentContainerStyle={{ paddingBottom: 45 }}
       renderItem={({ item }) => (
+		// console.log("Thumbnail", item.thumbnail),
         <TouchableOpacity
           onPress={() => onPress && onPress(item)}
         >

@@ -14,10 +14,10 @@ export function SearchScreen({ navigation }: any) {
 
   const handleOnPress = async (item: Music) => {
 	try {
-		const response = await createMusic(item.fileId);
+		// const response = await createMusic(item.fileId);
 		selectTrack(item);
 		navigation.navigate("Player");
-		console.log("Response", response);
+		// console.log("Response", response);
 	}
 	catch (error: any) {
 		console.log("API Error:", error.message);
