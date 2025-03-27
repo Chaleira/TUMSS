@@ -5,10 +5,24 @@ import { useSearch } from "../../hooks/search.hooks";
 import BottomNav from "@components/BottomNav";
 import { useAudioPlayer } from "@hooks/player.hooks";
 import MusicList from "@components/MusicList";
+import { createMusic } from "@api/music.api";
+import { Music } from "types/music.types";
 
 export function SearchScreen({ navigation }: any) {
   const { inputRef, setSearchQuery, results, loading } = useSearch();
   const { selectTrack } = useAudioPlayer();
+
+  const handleOnPress = async (item: Music) => {
+	try {
+		const response = await createMusic(item.fileId);
+		selectTrack(item);
+		navigation.navigate("Player");
+		console.log("Response", response);
+	}
+	catch (error: any) {
+		console.log("API Error:", error.message);
+	}
+	};
 
   return (
     <View style={{ flex: 1, padding: 10, paddingTop: 40 }}>
@@ -16,19 +30,7 @@ export function SearchScreen({ navigation }: any) {
 
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
-      <FlatList
-        data={results}
-        keyExtractor={(item) => item.videoUrl}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => { selectTrack({fileId: item.videoUrl, title: item.title, thumbnail: item.thumbnail}); navigation.navigate("Player");}}>
-            <View style={{ flexDirection: "row", padding: 10, alignItems: "center" }}>
-              <Image source={{ uri: item.thumbnail }} style={{ width: 100, height: 70, borderRadius: 8, marginRight: 10 }} />
-              <Text style={{ fontSize: 16, flexShrink: 1 }}>{item.title}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
-	  {/* <MusicList playlist={results} onpress/> */}
+	  <MusicList playlist={results} onPress={handleOnPress}/>
 	<BottomNav navigation={navigation} active="Search" />
     </View>
   );

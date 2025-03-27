@@ -65,7 +65,7 @@ export const musicService = (() => {
 
 	// After this return statement, all methods are public
 	return {
-		fetchMusicFromYouTube: async (query: string): Promise<any[]> => {
+		fetchMusicFromYouTube: async (query: string): Promise<Song[]> => {
 			const maxResults = 1;
 
 			try {
@@ -81,7 +81,7 @@ export const musicService = (() => {
 				});
 				return response.data.items.map((item: any) => ({
 					title: item.snippet.title,
-					videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+					fileId: item.id.videoId,
 					thumbnail: item.snippet.thumbnails.high.url,
 				}));
 			} catch (error: any) {

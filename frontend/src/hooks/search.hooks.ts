@@ -2,12 +2,13 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {  searchMusic } from "../api/music.api";
 import { TextInput } from "react-native-gesture-handler";
 import { useFocusEffect } from '@react-navigation/native';
+import { Music } from "types/music.types";
 
 
 export function useSearch() {
   const [loading, setLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [results, setResults] = useState<{ title: string; thumbnail: string; videoUrl: string }[]>([]);
+  const [results, setResults] = useState<Music[]>([]);
   const inputRef = useRef<TextInput>(null);
 
   useFocusEffect(
@@ -30,6 +31,7 @@ export function useSearch() {
       setLoading(true);
       try {
         const response = await searchMusic(searchQuery);
+		console.log("Response", response);
         setResults(response);
       } catch (error: any) {
         console.error("API Error:", error.message);

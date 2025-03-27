@@ -5,8 +5,7 @@ export const searchMusic = async (query: string) => {
 		const response = await api.get(`/music/search?q=${query}`);
 		return response.data;
 	} catch (error: any) {
-		if (error.response) throw new Error(error.response.data.message);
-		throw error;
+		if (error.response) console.log(error.response.data.message);
 	}
 }
 

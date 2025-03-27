@@ -29,7 +29,7 @@ export default function HomeScreen({ navigation }: any) {
 	};
 
 	return (
-		<View style={{ flex: 1, paddingLeft: 10 }}>
+		<View style={{ flex: 1, paddingLeft: 0 }}>
 			<View style={{ flexDirection: "row", paddingTop: 35, alignItems: "flex-end" }}>
 				<Text style={{ fontSize: 24 }}>Lastly Played</Text>
 				<TouchableOpacity
@@ -44,9 +44,9 @@ export default function HomeScreen({ navigation }: any) {
 				>
 					<Ionicons name="log-out" size={28} />
 				</TouchableOpacity>
-				{/* <Text style={{ fontSize: 24 }}>Lastly Played</Text> */}
 			</View>
 				<MusicList playlist={playlist} onPress={async (item) => {
+							console.log("Item", item.id);
 							setPlaylistIndex(playlist.indexOf(item));
 							navigation.navigate("Player");
 						  }}/>

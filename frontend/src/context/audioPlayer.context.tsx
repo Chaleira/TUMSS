@@ -138,7 +138,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	
 		return () => {
 			(async () => {
-				console.log("Cleaning up audio player Context", music);
+				console.log("Cleaning up audio player Context");
 				if (music) {
 					await music.stopAsync();
 					await music.unloadAsync();

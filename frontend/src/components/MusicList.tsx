@@ -1,23 +1,21 @@
 import React from "react";
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-interface PlaylistItem {
-  fileId: string;
-  title: string;
-  thumbnail: string;
-}
-
+import { Music } from "types/music.types";
+import { Ionicons } from "@expo/vector-icons";
 interface MusicListProps {
-  playlist: PlaylistItem[];
-//   setPlaylistIndex: (index: number) => void;
-//   navigation: any;
-  onPress?: (item: PlaylistItem) => void;
+  playlist: Music[];
+  onPress?: (item: Music) => void;
 }
 
 const MusicList: React.FC<MusicListProps> = ({ playlist, onPress }) => {
 
+	const onAdd = (item: Music) => {
+		console.log("Add", item);
+	};
+
   return (
+	<View style={{ flex: 1}}>
     <FlatList
       data={playlist}
       keyExtractor={(item) => item.fileId}
@@ -28,11 +26,17 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPress }) => {
         >
           <View style={styles.itemContainer}>
             <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-            <Text style={styles.title}>{item.title}</Text>
+            <View style={styles.textContainer}>
+				<Text style={styles.title}>{item.title}</Text>
+			</View>
+			<TouchableOpacity style={styles.addButton} onPress={() => onAdd(item)}>
+				<Ionicons name="add" size={24} color="white" />
+			</TouchableOpacity>
           </View>
         </TouchableOpacity>
       )}
     />
+	</View>
   );
 };
 
@@ -52,6 +56,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     flexShrink: 1,
+  },
+  textContainer: {
+    flex: 1, // Allows it to shrink and not take up unnecessary space
+    marginRight: 50, // Creates space before the "+" button
+  },
+  addButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 9,
+    backgroundColor: "#007AFF",
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // Shadow on Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
 });
 
