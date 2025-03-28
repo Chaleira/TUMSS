@@ -14,29 +14,18 @@ export function PlayerScreen({ navigation, route }: any) {
 	// const [ isLoading, setIsLoading] = useState<boolean>(false)
 
 	const handleNext = () => {
+		if (playlistIndex < -5) return;
         setPlaylistIndex(playlistIndex + 1);
         setPrevDisabled(true); // Disable "Previous" button
         setTimeout(() => setPrevDisabled(false), 1000); // Re-enable after 1 sec
     };
 
 	const handlePrev = () => {
+		if (playlistIndex < -5) return;
 		setPlaylistIndex(playlistIndex - 1);
 		setNextDisabled(true); // Disable "Next" button
 		setTimeout(() => setNextDisabled(false), 1000); // Re-enable after
 	}
-
-	// useEffect(() => {
-    //     if (currentTrack) {
-    //         setIsLoading(true); // Start loading
-    //         // Simulate loading for 2 seconds (replace this with your actual loading logic)
-    //         const timeout = setTimeout(() => {
-    //             setIsLoading(false); // Stop loading
-    //             // setDuration(300000); // Example duration in milliseconds (5 minutes)
-    //         }, 2000);
-
-    //         return () => clearTimeout(timeout);
-    //     }
-    // }, [currentTrack]);
 
     return (
         <View style={{ flex: 1 }}>

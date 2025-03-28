@@ -51,6 +51,7 @@ export const musicController = {
 
 		if (!videoId) {
 			res.status(400).json({ message: "Title and fileId are required." });
+			console.error("Title and fileId are required.");
 			return;
 		}
 

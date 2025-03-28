@@ -11,7 +11,7 @@ export const searchMusic = async (query: string) => {
 
 export const createMusic = async (videoId: string) => {
 	try {
-		const response = await api.post("/music/create", videoId);
+		const response = await api.post("/music/create", {videoId});
 		return response.data;
 	} catch (error: any) {
 		if (error.response) throw new Error(error.response.data.message);

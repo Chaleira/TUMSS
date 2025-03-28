@@ -54,27 +54,28 @@ export function PlaylistScreen({ navigation }: any) {
 	}, []);
 
 	const { setPlaylist, setPlaylistIndex } = useAudioPlayer();
-		const handleMusicPress = (item: Music) => {
-			setIsPlaylistVisible(false);
-			setPlaylist(musicList);
-			setPlaylistIndex(musicList.indexOf(item));
-			navigation.navigate("Player");
-		};
+	const handleMusicPress = async (item: Music) => {
+		setIsPlaylistVisible(false);
+		musicList.forEach((music) => {
+			console.log(music.title);
+		});
+		// console.log(item);
+		setPlaylist(musicList);
+		setPlaylistIndex(musicList.indexOf(item));
+		navigation.navigate("Player");
+	};
 
 	return (
 		<View style={{ flex: 1, paddingTop: 30 }}>
-			{isPlaylistVisible && (
+			{isPlaylistVisible ? (
 				<MusicListPopup musicList={musicList} onPressMusic={(item) => handleMusicPress(item)} onClose={() => setIsPlaylistVisible(false)} isVisible={isPlaylistVisible} />
-			)}
+			) : (
+				<View style={{ paddingTop: 30 }}>
+					<MyButton title="New" onPress={() => setIsCreatingPlaylistVisible(true)} />
+					<TextInputModal isVisible={isCreatingPlaylistVisible} onClose={() => setIsCreatingPlaylistVisible(false)} onSubmit={handleTextSubmit} />
 
-			{!isPlaylistVisible && (
-			<View style={{paddingTop: 30 }}>
-			<MyButton title="New" onPress={() => setIsCreatingPlaylistVisible(true)} />
-			<TextInputModal isVisible={isCreatingPlaylistVisible} onClose={() => setIsCreatingPlaylistVisible(false)} onSubmit={handleTextSubmit} />
-
-
-			<PlaylistList playlists={playlists} onSelect={(item) => handlePlaylistSelect(item)} />
-			</View>
+					<PlaylistList playlists={playlists} onSelect={(item) => handlePlaylistSelect(item)} />
+				</View>
 			)}
 
 			<BottomNav navigation={navigation} active="Playlist" />

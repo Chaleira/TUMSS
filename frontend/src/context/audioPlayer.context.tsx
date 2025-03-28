@@ -38,7 +38,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	const [currentTrack, setCurrentTrack] = useState<Music | null>(null);
 	const [sliderValue, setSliderValue] = useState(0);
 	const [playlist, setPlaylist] = useState<Music[]>([]);
-	const [playlistIndex, setPlaylistIndex] = useState<number>(-1);
+	const [playlistIndex, setPlaylistIndex] = useState<number>(-10);
 	const [load, setLoad] = useState<boolean>(false);
 	const [duration, setDuration] = useState<number>(0);
 
@@ -102,7 +102,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 				}
 			});
 		} else {
-			console.error("No track loaded. Call loadTrack() first.");
+			console.log("No track loaded. Call loadTrack() first.");
 		}
 	};
 
@@ -138,7 +138,6 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	
 		return () => {
 			(async () => {
-				console.log("Cleaning up audio player Context");
 				if (music) {
 					await music.stopAsync();
 					await music.unloadAsync();
@@ -149,6 +148,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	}, [music]);
 
 	useEffect(() => {
+		if (playlistIndex == -10) return;
 		if (playlist.length > 0) {
 			if (playlistIndex < 0) {
 				setPlaylistIndex(playlist.length - 1);
