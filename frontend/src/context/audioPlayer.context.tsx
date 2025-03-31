@@ -7,6 +7,7 @@ import { API_ENDPOINT, AUTH_TOKEN, MAIN_SEARCH_URL } from "@config/config.index"
 import { Music } from "types/music.types";
 import { set } from "lodash";
 import { getAllMusic } from "@api/music.api";
+import { getPlaylistSongs } from "@api/playlist.api";
 
 // Define types
 interface AudioPlayerContextType {
@@ -18,6 +19,7 @@ interface AudioPlayerContextType {
 	onSliderValueChange: (value: number) => void;
 	isPlaying: boolean;
 	currentTrack: { title: string; thumbnail: string } | null;
+	setCurrentTrack: React.Dispatch<React.SetStateAction<Music | null>>;
 	sliderValue: number;
 	setSliderValue: (value: number) => void;
 	load: boolean;
@@ -27,6 +29,8 @@ interface AudioPlayerContextType {
 	playlistIndex: number;
 	setLoad: React.Dispatch<React.SetStateAction<boolean>>;
 	duration: number;
+	reload: boolean;
+	setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create Context
@@ -41,6 +45,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	const [playlistIndex, setPlaylistIndex] = useState<number>(-10);
 	const [load, setLoad] = useState<boolean>(false);
 	const [duration, setDuration] = useState<number>(0);
+	const [reload, setReload] = useState(true);
 
 	// Function to load a track
 
@@ -159,9 +164,11 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 				setLoad(false);
 				return;
 			}
-			selectTrack(playlist[playlistIndex]);
+			if (reload)
+				selectTrack(playlist[playlistIndex]);
+			setReload(true);
 		}
-	}, [playlistIndex]);
+	}, [playlistIndex, playlist]);
 
 	const selectTrack = async (song: Music) => {
 		if (load) return;
@@ -180,6 +187,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 				unloadTrack,
 				isPlaying,
 				currentTrack,
+				setCurrentTrack,
 				sliderValue,
 				setSliderValue,
 				selectTrack,
@@ -191,6 +199,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 				setLoad,
 				onSliderValueChange,
 				duration,
+				reload,
+				setReload,
 			}}
 		>
 			{children}

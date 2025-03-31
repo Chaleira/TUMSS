@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, TouchableOpacity } from "react-native";
 import MyButton from "components/MyButton";
 import { useAuth } from "@hooks/auth.hooks";
 import BottomNav from "@components/BottomNav";
@@ -7,9 +7,10 @@ import { createPlaylist, getPlaylistSongs, getUserPlaylists } from "@api/playlis
 import TextInputModal from "@components/TextInputModal";
 import PlaylistList from "@components/PlaylistList";
 import { PlaylistType } from "types/components.types";
-import MusicListPopup from "@components/MusicListPopup";
 import { Music } from "types/music.types";
 import { useAudioPlayer } from "@hooks/player.hooks";
+import { Ionicons } from "@expo/vector-icons";
+import MusicList from "@components/MusicList";
 
 export function PlaylistScreen({ navigation }: any) {
 	const { user } = useAuth();
@@ -33,7 +34,6 @@ export function PlaylistScreen({ navigation }: any) {
 			const response = await getPlaylistSongs(playlist.id);
 			setMusicList(response);
 			setIsPlaylistVisible(true);
-			// console.log(response);
 		} catch (error: any) {
 			Alert.alert("Error", error.message);
 		}
@@ -56,19 +56,23 @@ export function PlaylistScreen({ navigation }: any) {
 	const { setPlaylist, setPlaylistIndex } = useAudioPlayer();
 	const handleMusicPress = async (item: Music) => {
 		setIsPlaylistVisible(false);
-		musicList.forEach((music) => {
-			console.log(music.title);
-		});
-		// console.log(item);
-		setPlaylist(musicList);
 		setPlaylistIndex(musicList.indexOf(item));
+		setPlaylist(musicList);
 		navigation.navigate("Player");
 	};
 
 	return (
 		<View style={{ flex: 1, paddingTop: 30 }}>
 			{isPlaylistVisible ? (
-				<MusicListPopup musicList={musicList} onPressMusic={(item) => handleMusicPress(item)} onClose={() => setIsPlaylistVisible(false)} isVisible={isPlaylistVisible} />
+				<View style={{ flex: 1 }}>
+				<TouchableOpacity onPress={() => setIsPlaylistVisible(false)} style={{ padding: 10, alignItems: "flex-end" }}>
+					<Ionicons name="arrow-back" size={28} />
+				</TouchableOpacity>
+				<View style={{ flex: 1, paddingLeft: 10 }}>
+				<MusicList playlist={musicList} onPressMusic={handleMusicPress} addVisible={false}/>
+				</View>
+				</View>
+				// <MusicListPopup musicList={musicList} onPressMusic={(item) => handleMusicPress(item)} onClose={() => setIsPlaylistVisible(false)} isVisible={isPlaylistVisible} />
 			) : (
 				<View style={{ paddingTop: 30 }}>
 					<MyButton title="New" onPress={() => setIsCreatingPlaylistVisible(true)} />

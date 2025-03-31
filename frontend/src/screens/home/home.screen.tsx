@@ -20,7 +20,7 @@ import { Music } from "types/music.types";
 export default function HomeScreen({ navigation }: any) {
 	const { logout, user } = useAuth();
 	const { homePlaylist } = useHome();
-	const { setPlaylistIndex, setPlaylist } = useAudioPlayer();
+	const { setPlaylistIndex, setPlaylist, setReload } = useAudioPlayer();
 	const [isPlaylistListVisible, setIsPlaylistListVisible] = useState(false);
 	const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
 	const [addMusic, setAddMusic] = useState<Music>();
@@ -63,7 +63,7 @@ export default function HomeScreen({ navigation }: any) {
 		<View style={{ flex: 1, paddingLeft: 10, paddingTop: 35 }}>
 			{isPlaylistListVisible ? (
 				<View style={{ flex: 1 }}>
-					<TouchableOpacity onPress={() => setIsPlaylistListVisible(false)} style={{ padding: 10, backgroundColor: "#ccc", borderRadius: 5 }}>
+					<TouchableOpacity onPress={() => setIsPlaylistListVisible(false)} style={{ padding: 10, borderRadius: 5, alignItems: "flex-end" }}>
 						<Ionicons name="arrow-back" size={28} />
 					</TouchableOpacity>
 					<PlaylistList
@@ -76,6 +76,7 @@ export default function HomeScreen({ navigation }: any) {
 								}
 								await addSongToPlaylist(addMusic.id, item.id);
 								const newPlaylist = await getPlaylistSongs(item.id);
+								setReload(false);
 								setPlaylist(newPlaylist);
 								Alert.alert("Success", addMusic.title + ` added to playlist \n` + item.name);
 							} catch (error: any) {
@@ -100,6 +101,7 @@ export default function HomeScreen({ navigation }: any) {
 							playlist={homePlaylist}
 							onPressMusic={async (item) => {
 								setPlaylistIndex(homePlaylist.indexOf(item));
+								setPlaylist(homePlaylist);
 								navigation.navigate("Player");
 							}}
 							onPressAdd={handleAdd}

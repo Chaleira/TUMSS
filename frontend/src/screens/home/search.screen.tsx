@@ -15,7 +15,7 @@ import { addSongToPlaylist, getPlaylistSongs, getUserPlaylists } from "@api/play
 export function SearchScreen({ navigation }: any) {
 	const { user } = useAuth();
 	const { inputRef, setSearchQuery, results, loading } = useSearch();
-	const { selectTrack, setPlaylist } = useAudioPlayer();
+	const { selectTrack, setPlaylist, setReload } = useAudioPlayer();
 	const [isPlaylistListVisible, setIsPlaylistListVisible] = useState(false);
 	const [playlists, setPlaylists] = useState([]);
 	const [addMusic, setAddMusic] = useState<Music>();
@@ -64,10 +64,9 @@ export function SearchScreen({ navigation }: any) {
 									Alert.alert("Error", "Error Selecting music");
 									return;
 								}
-								// console.log(item.id);
-								// console.log(addMusic.id);
 								await addSongToPlaylist(addMusic.id, item.id);
 								const newPlaylist = await getPlaylistSongs(item.id);
+								setReload(false);
 								setPlaylist(newPlaylist);
 								Alert.alert("Success", addMusic.title + ` added to playlist \n` + item.name);
 							} catch (error: any) {

@@ -46,7 +46,7 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAd
 const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
-    padding: 10,
+    padding: 5,
     alignItems: "center",
     paddingLeft: 0,
   },

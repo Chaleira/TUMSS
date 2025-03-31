@@ -1,3 +1,4 @@
+import { Sequelize } from "sequelize";
 import Playlist from "../models/playlist.model";
 import PlaylistSong from "../models/playlistSong.model";
 import Song from "../models/song.model";
@@ -83,20 +84,19 @@ export const playlistService = (() => {
 		getPlaylistSongs: async (playlistId: number): Promise<Song[] | null> => {
 			try {
 				const playlistSongs = await PlaylistSong.findAll({
-					where: {
-						playlistId,
-					},
+					where: { playlistId },
+					order: [['createdAt', 'ASC']],
 				});
 
 				const songIds = playlistSongs.map((playlistSong) => playlistSong.songId);
 
 				const songs = await Song.findAll({
-					where: {
-						id: songIds,
-					},
+					where: { id: songIds },
 				});
 
-				return songs;
+				const orderedSongs = songIds.map((id) => songs.find((song) => song.id === id)!);
+
+				return orderedSongs;
 			} catch (error: any) {
 				console.error(error.message);
 				throw new Error("Error getting playlist songs");
