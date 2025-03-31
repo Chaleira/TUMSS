@@ -58,7 +58,7 @@ export function PlaylistScreen({ navigation }: any) {
 
 	const handleMusicPress = async (item: Music) => {
 		setIsPlaylistVisible(false);
-		setPlaylist(musicList);
+		setPlaylist({id: selectedPlaylist ? selectedPlaylist.id : "" , name: selectedPlaylist ? selectedPlaylist.name : "", music: musicList});
 		setPlaylistIndex(musicList.indexOf(item));
 		navigation.navigate("Player");
 	};
@@ -109,7 +109,8 @@ export function PlaylistScreen({ navigation }: any) {
 		<View style={{ flex: 1, paddingTop: 30 }}>
 			{isPlaylistVisible ? (
 				<View style={{ flex: 1 }}>
-					<TouchableOpacity onPress={() => {setIsPlaylistVisible(false); setSelectedPlaylist(null)}} style={{ padding: 10, alignItems: "flex-end" }}>
+					<TouchableOpacity onPress={() => {setIsPlaylistVisible(false); setSelectedPlaylist(null)}} style={{ padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
+					<Text style={{ fontSize: 24, paddingLeft: 10 }}>{selectedPlaylist?.name}</Text>
 						<Ionicons name="arrow-back" size={28} />
 					</TouchableOpacity>
 					<View style={{ flex: 1, paddingLeft: 10 }}>

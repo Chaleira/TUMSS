@@ -8,6 +8,7 @@ import { Music } from "types/music.types";
 import { set } from "lodash";
 import { getAllMusic } from "@api/music.api";
 import { getPlaylistSongs } from "@api/playlist.api";
+import { PlaylistType } from "types/components.types";
 
 // Define types
 interface AudioPlayerContextType {
@@ -23,8 +24,8 @@ interface AudioPlayerContextType {
 	sliderValue: number;
 	setSliderValue: (value: number) => void;
 	load: boolean;
-	setPlaylist: React.Dispatch<React.SetStateAction<Music[]>>;
-	playlist: Music[];
+	setPlaylist: React.Dispatch<React.SetStateAction<PlaylistType>>;
+	playlist: PlaylistType;
 	setPlaylistIndex: React.Dispatch<React.SetStateAction<number>>;
 	playlistIndex: number;
 	setLoad: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,7 +42,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTrack, setCurrentTrack] = useState<Music | null>(null);
 	const [sliderValue, setSliderValue] = useState(0);
-	const [playlist, setPlaylist] = useState<Music[]>([]);
+	const [playlist, setPlaylist] = useState<PlaylistType>({id: "", name: "", music: []});
 	const [playlistIndex, setPlaylistIndex] = useState<number>(-10);
 	const [load, setLoad] = useState<boolean>(false);
 	const [duration, setDuration] = useState<number>(0);
@@ -116,8 +117,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 	// Function to stop the current track
 	const stopTrack = async () => {
 		if (music) {
-			await music.pauseAsync();
 			setIsPlaying(false);
+			await music.pauseAsync();
 		}
 	};
 
@@ -156,18 +157,18 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 	useEffect(() => {
 		if (playlistIndex == -10) return;
-		if (playlist.length > 0) {
+		if (playlist?.music?.length !== undefined && playlist?.music.length > 0) {
 			if (playlistIndex < 0) {
-				setPlaylistIndex(playlist.length - 1);
+				setPlaylistIndex(playlist.music.length - 1);
 				setLoad(false);
 				return;
-			} else if (playlistIndex >= playlist.length) {
+			} else if (playlistIndex >= playlist.music.length) {
 				setPlaylistIndex(0);
 				setLoad(false);
 				return;
 			}
 			if (reload)
-				selectTrack(playlist[playlistIndex]);
+				selectTrack(playlist.music[playlistIndex]);
 			setReload(true);
 		}
 	}, [playlistIndex, playlist]);

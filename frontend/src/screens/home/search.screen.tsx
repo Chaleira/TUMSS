@@ -67,7 +67,7 @@ export function SearchScreen({ navigation }: any) {
 								await addSongToPlaylist(addMusic.id, item.id);
 								const newPlaylist = await getPlaylistSongs(item.id);
 								setReload(false);
-								setPlaylist(newPlaylist);
+								setPlaylist({id: item.id, name: item.name, music:newPlaylist});
 								Alert.alert("Success", addMusic.title + ` added to playlist \n` + item.name);
 							} catch (error: any) {
 								Alert.alert("Error", error.message);
