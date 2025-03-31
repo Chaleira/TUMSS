@@ -54,6 +54,8 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
 			setSliderValue(status.positionMillis);
 			setDuration(status.durationMillis);
 		}
+		if (status.didJustFinish)
+			setPlaylistIndex(playlistIndex + 1);
 	};
 
 	const loadTrack = async (song: Music, shouldPlay: boolean) => {

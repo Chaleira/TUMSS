@@ -22,6 +22,24 @@ export const playlistController = {
 		}
 	},
 
+	deletePlaylist: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+		const { id } = req.body;
+		const user = req.user as JwtPayload;
+		const userId = user.id;
+		if (!id || !userId) {
+			res.status(400).json({ message: "Id and userId are required." });
+			return;
+		}
+		try {
+			await playlistService.deletePlaylist(parseInt(id), userId);
+			res.status(200).json({ message: "Playlist deleted successfully." });
+		}
+		catch (error: any) {
+			console.error(error.message);
+			res.status(500).json({ message: error.message });
+		}
+	},
+
 	findPlaylistById: async (req: AuthenticatedRequest, res: Response): Promise<void> => {
 		const { id } = req.params;
 

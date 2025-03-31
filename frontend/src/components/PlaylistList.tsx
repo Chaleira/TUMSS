@@ -7,30 +7,49 @@ import { View } from "react-native-reanimated/lib/typescript/Animated";
 interface PlaylistListProps {
 	playlists: PlaylistType[];
 	onSelect: (item: PlaylistType) => void;
-	// userId: string | undefined;
+	onRemove?: (item: PlaylistType) => void;
 }
 
-export default function PlaylistList ({ playlists, onSelect}: PlaylistListProps) {
+export default function PlaylistList({ playlists, onSelect, onRemove }: PlaylistListProps) {
 	return (
 		<FlatList
-		data={playlists}
-		keyExtractor={(item) => item.id}
-		renderItem={({ item }) => (
-			<TouchableOpacity style={styles.item} onPress={() => onSelect(item)}>
+			data={playlists}
+			keyExtractor={(item) => item.id}
+			renderItem={({ item }) => (
+				<TouchableOpacity style={styles.item} onPress={() => onSelect(item)}>
 					<Text style={styles.text}>{item.name}</Text>
+
+					{onRemove && (
+						<TouchableOpacity style={styles.removeButton} onPress={() => onRemove(item)}>
+							<Text style={styles.removeButtonText}>Remove</Text>
+						</TouchableOpacity>
+					)}
 				</TouchableOpacity>
 			)}
-			/>
+		/>
 	);
-};
+}
 
 const styles = StyleSheet.create({
 	item: {
-		padding: 15,
-		borderBottomWidth: 1,
-		borderBottomColor: "#ccc",
+		flexDirection: 'row', // Horizontal layout
+		alignItems: 'center',
+		justifyContent: 'space-between', // Space between text and button
+		padding: 10,
+		backgroundColor: '#fff',
+		marginBottom: 5,
+		borderRadius: 8,
 	},
 	text: {
 		fontSize: 16,
+	},
+	removeButton: {
+		padding: 8,
+		backgroundColor: 'red',
+		borderRadius: 5,
+	},
+	removeButtonText: {
+		color: 'white',
+		fontWeight: 'bold',
 	},
 });

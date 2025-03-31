@@ -11,5 +11,6 @@ router.post("/create", playlistController.createPlaylist);
 router.post("/addSong", playlistController.addSongToPlaylist);
 
 router.post("/removeSong", playlistController.removeSongFromPlaylist);
+router.post("/delete", playlistController.deletePlaylist);
 
 export default router;

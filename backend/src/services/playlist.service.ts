@@ -23,6 +23,45 @@ export const playlistService = (() => {
 			}
 		},
 
+		deletePlaylist: async (id: number, userId: number): Promise<void> => {
+			try {
+				const playlist = await Playlist.findOne({
+					where: {
+						id,
+						userId,
+					},
+				});
+				if (!playlist) {
+					throw new Error("Playlist not found");
+				}
+				const playlistSongs = await PlaylistSong.findAll({
+					where: {
+						playlistId: id,
+					},
+				});
+
+				if (playlistSongs.length > 0) {
+					await PlaylistSong.destroy({
+						where: {
+							playlistId: id,
+						},
+					});
+				}
+				
+				await Playlist.destroy({
+					where: {
+						id,
+						userId,
+					},
+				});
+			} catch (error: any) {
+				if (error.name === "SequelizeForeignKeyConstraintError") {
+					throw new Error("Invalid playlistId. Playlist does not exist.");
+				}
+				throw new Error("An unexpected error occurred.");
+			}
+		},
+
 		findPlaylistById: async (id: number): Promise<Playlist | null> => {
 			try {
 				const playlist = await Playlist.findOne({

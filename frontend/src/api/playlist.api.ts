@@ -30,6 +30,16 @@ export const createPlaylist = async (name: string) => {
 	}
 }
 
+export const deletePlaylist = async (id: string) => {
+	try {
+		const response = await api.post("/playlist/delete", { id });
+		return response.data;
+	} catch (error: any) {
+		if (error.response) throw new Error(error.response.data.message);
+		throw error;
+	}
+}
+
 export const addSongToPlaylist = async (songId: string, playlistId: string) => {
 	try {
 		const response = await api.post("/playlist/addSong", { songId, playlistId });

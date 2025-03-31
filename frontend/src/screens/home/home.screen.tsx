@@ -26,14 +26,7 @@ export default function HomeScreen({ navigation }: any) {
 	const [addMusic, setAddMusic] = useState<Music>();
 
 	const handleGet = async () => {
-		try {
-			await SecureStore.deleteItemAsync("authToken");
-			await AsyncStorage.removeItem("user");
-			const data = await getMainData();
-			Alert.alert("Get", data);
-		} catch (error: any) {
-			Alert.alert("Get", error.message);
-		}
+		Alert.alert("Hello", "This is a community music app. You can add your own music to your playlist and share it with others.");
 	};
 
 	const handleAdd = async (item: Music) => {

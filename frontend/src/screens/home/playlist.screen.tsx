@@ -3,7 +3,7 @@ import { View, Text, Alert, TouchableOpacity } from "react-native";
 import MyButton from "components/MyButton";
 import { useAuth } from "@hooks/auth.hooks";
 import BottomNav from "@components/BottomNav";
-import { createPlaylist, getPlaylistSongs, getUserPlaylists, removeSongFromPlaylist } from "@api/playlist.api";
+import { createPlaylist, deletePlaylist, getPlaylistSongs, getUserPlaylists, removeSongFromPlaylist } from "@api/playlist.api";
 import TextInputModal from "@components/TextInputModal";
 import PlaylistList from "@components/PlaylistList";
 import { PlaylistType } from "types/components.types";
@@ -19,7 +19,7 @@ export function PlaylistScreen({ navigation }: any) {
 	const [isPlaylistVisible, setIsPlaylistVisible] = useState(false);
 	const [musicList, setMusicList] = useState<Music[]>([]);
 	const [playlists, setPlaylists] = useState<PlaylistType[]>([]);
-	const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
+	const [selectedPlaylist, setSelectedPlaylist] = useState<PlaylistType | null>(null);
 
 	const handleTextSubmit = async (text: string) => {
 		try {
@@ -35,7 +35,7 @@ export function PlaylistScreen({ navigation }: any) {
 		try {
 			const response = await getPlaylistSongs(playlist.id);
 			setMusicList(response);
-			setSelectedPlaylistId(playlist.id);
+			setSelectedPlaylist(playlist);
 			setIsPlaylistVisible(true);
 		} catch (error: any) {
 			Alert.alert("Error", error.message);
@@ -65,19 +65,40 @@ export function PlaylistScreen({ navigation }: any) {
 
 	const handleRemovePress = async (item: Music) => {
 		try {
-			if (!selectedPlaylistId || item.id === undefined) {
+			if (!selectedPlaylist || item.id === undefined) {
 				Alert.alert("Error", "No playlist selected");
 				return;
 			}
-			const remove = await removeSongFromPlaylist(item.id, selectedPlaylistId);
+			const remove = await removeSongFromPlaylist(item.id, selectedPlaylist.id);
 			if (remove) {
-				const newPlaylist = await getPlaylistSongs(selectedPlaylistId);
+				const newPlaylist = await getPlaylistSongs(selectedPlaylist.id);
 				setReload(false);
 				setPlaylist(newPlaylist);
 				setMusicList(newPlaylist);
-				Alert.alert("Success", "Music removed from playlist");
+				Alert.alert("Success", item.title + " removed from playlist " + selectedPlaylist.name);
 			} else {
 				Alert.alert("Error", "Error removing music from playlist");
+			}
+		} catch (error: any) {
+			Alert.alert("Error", error.message);
+		}
+	};
+
+	const handleRemovePlaylist  = async (item: PlaylistType) => {
+		try {
+			if (item.id === undefined) {
+				Alert.alert("Error", "No playlist selected");
+				return;
+			}
+			const remove = await deletePlaylist(item.id);
+			if (remove) {
+				if (!user) return;
+				const newPlaylist = await getUserPlaylists(user.id);
+				setReload(false);
+				setPlaylists(newPlaylist);
+				Alert.alert("Success", "Playlist " + item.name + " deleted!");
+			} else {
+				Alert.alert("Error", "Error removing playlist");
 			}
 		} catch (error: any) {
 			Alert.alert("Error", error.message);
@@ -88,7 +109,7 @@ export function PlaylistScreen({ navigation }: any) {
 		<View style={{ flex: 1, paddingTop: 30 }}>
 			{isPlaylistVisible ? (
 				<View style={{ flex: 1 }}>
-					<TouchableOpacity onPress={() => {setIsPlaylistVisible(false); setSelectedPlaylistId(null)}} style={{ padding: 10, alignItems: "flex-end" }}>
+					<TouchableOpacity onPress={() => {setIsPlaylistVisible(false); setSelectedPlaylist(null)}} style={{ padding: 10, alignItems: "flex-end" }}>
 						<Ionicons name="arrow-back" size={28} />
 					</TouchableOpacity>
 					<View style={{ flex: 1, paddingLeft: 10 }}>
@@ -100,7 +121,7 @@ export function PlaylistScreen({ navigation }: any) {
 					<MyButton title="New" onPress={() => setIsCreatingPlaylistVisible(true)} />
 					<TextInputModal isVisible={isCreatingPlaylistVisible} onClose={() => setIsCreatingPlaylistVisible(false)} onSubmit={handleTextSubmit} />
 
-					<PlaylistList playlists={playlists} onSelect={(item) => handlePlaylistSelect(item)} />
+					<PlaylistList playlists={playlists} onSelect={(item) => handlePlaylistSelect(item) } onRemove={handleRemovePlaylist} />
 				</View>
 			)}
 
