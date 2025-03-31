@@ -4,14 +4,17 @@ import { useNavigation } from "@react-navigation/native";
 import { Music } from "types/music.types";
 import { Ionicons } from "@expo/vector-icons";
 import { add } from "lodash";
+import { PlaylistType } from "types/components.types";
 export interface MusicListProps {
   playlist: Music[];
   onPressMusic: (item: Music) => void;
   onPressAdd?: (item: Music) => void;
   addVisible?: boolean;
+  removeVisible?: boolean;
+  onPressRemove?: (item: Music) => void;
 }
 
-const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAdd, addVisible }) => {
+const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAdd, addVisible, removeVisible, onPressRemove }) => {
 
 	addVisible = addVisible === undefined ? true : false;
   return (
@@ -30,9 +33,14 @@ const MusicList: React.FC<MusicListProps> = ({ playlist, onPressMusic, onPressAd
             <View style={styles.textContainer}>
 				<Text style={styles.title}>{item.title}</Text>
 			</View>
-			{addVisible && (
+			{addVisible && !removeVisible && (
 				<TouchableOpacity style={styles.addButton} onPress={() => onPressAdd && onPressAdd(item)}>
 					<Ionicons name="add" size={24} color="white" />
+				</TouchableOpacity>
+			)}
+			{ removeVisible && !addVisible && (
+				<TouchableOpacity style={styles.removeButton} onPress={() => onPressRemove && onPressRemove(item)}>
+					<Ionicons name="remove" size={24} color="white" />
 				</TouchableOpacity>
 			)}
           </View>
@@ -69,6 +77,22 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 9,
     backgroundColor: "#007AFF",
+    width: 40,
+    height: 40,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // Shadow on Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  removeButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 9,
+    backgroundColor: "red",
     width: 40,
     height: 40,
     borderRadius: 25,
