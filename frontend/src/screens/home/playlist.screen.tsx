@@ -58,8 +58,8 @@ export function PlaylistScreen({ navigation }: any) {
 
 	const handleMusicPress = async (item: Music) => {
 		setIsPlaylistVisible(false);
-		setPlaylistIndex(musicList.indexOf(item));
 		setPlaylist(musicList);
+		setPlaylistIndex(musicList.indexOf(item));
 		navigation.navigate("Player");
 	};
 
