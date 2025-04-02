@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dd7a8800-45ed-4326-bde7-767867cb094f"
+      }
+    },
+    "owner": "chaleira"
   }
 }

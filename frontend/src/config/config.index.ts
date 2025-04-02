@@ -1,4 +1,7 @@
-import { API_URL, PORT, TOKEN, NEW_TOKEN } from "@env";
+const API_URL = process.env.API_URL;
+const PORT = process.env.PORT;
+const TOKEN = process.env.TOKEN;
+const NEW_TOKEN = process.env.NEW_TOKEN;
 
 export const API_ENDPOINT = "http://" + API_URL + ":" + PORT;
 export const API_MUSIC_STREAM = API_ENDPOINT + "/music/stream/";

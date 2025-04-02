@@ -1,47 +1,24 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useAudioPlayer } from "@hooks/player.hooks";
-import { set } from "lodash";
-import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, Animated } from "react-native";
-import { Directions, FlingGestureHandler, Gesture, GestureDetector, PanGestureHandler, State } from "react-native-gesture-handler";
 
 export default function MusicPlayerCard({ navigation }: any) {
-	const { currentTrack, isPlaying, playTrack, stopTrack, setPlaylistIndex, playlistIndex } = useAudioPlayer();
+	const { currentTrack, isPlaying, playTrack, stopTrack } = useAudioPlayer();
 
 	return (
 		<View style={styles.container}>
-		<FlingGestureHandler
-			direction={Directions.LEFT}
-			onHandlerStateChange={({ nativeEvent }) => {
-				if (nativeEvent.state === State.END) {
-					if (playlistIndex < -5) return;
-					setPlaylistIndex(playlistIndex + 1);
-				}
-			}}
-		>
-			<FlingGestureHandler
-				direction={Directions.RIGHT}
-				onHandlerStateChange={({ nativeEvent }) => {
-					if (nativeEvent.state === State.END) {
-						if (playlistIndex < -5) return;
-						setPlaylistIndex(playlistIndex - 1);
-					}
-				}}
-			>
-					<TouchableOpacity onPress={() => navigation.navigate("Player")} style={{ flexDirection: "row", alignItems: "center" }}>
-					<Image source={{ uri: currentTrack?.thumbnail }} style={styles.image} />
+			<TouchableOpacity onPress={() => navigation.navigate("Player")} style={{ flexDirection: "row", alignItems: "center" }}>
+				<Image source={{ uri: currentTrack?.thumbnail }} style={styles.image} />
 
-					<Text style={styles.songName}>{currentTrack?.title}</Text>
+				<Text style={styles.songName}>{currentTrack?.title}</Text>
 
-					<View style={styles.controls}>
-						<TouchableOpacity style={styles.button} onPress={isPlaying ? stopTrack : playTrack}>
-							<Ionicons name={isPlaying ? "pause" : "play"} size={24} color="white" />
-						</TouchableOpacity>
-					</View>
+				<View style={styles.controls}>
+					<TouchableOpacity style={styles.button} onPress={isPlaying ? stopTrack : playTrack}>
+						<Ionicons name={isPlaying ? "pause" : "play"} size={24} color="white" />
 					</TouchableOpacity>
-			</FlingGestureHandler>
-		</FlingGestureHandler>
 				</View>
+			</TouchableOpacity>
+		</View>
 	);
 }
 

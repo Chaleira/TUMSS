@@ -15,7 +15,7 @@ export const useHome = () => {
 		try {
 			const response = await getAllMusic();
 			setHomePlaylist(response);
-			if (playlist.length === 0)
+			if (playlist.music?.length === 0)
 				setPlaylist(response);
 		} catch (error: any) {
 			console.error("API Error:", error.message);

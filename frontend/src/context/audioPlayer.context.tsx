@@ -3,11 +3,8 @@ import { Audio } from "expo-av";
 import { getYouTubeVideoID } from "@utils/parseUrl.utils";
 import { API_MUSIC_STREAM } from "@config/config.index";
 import * as SecureStore from "expo-secure-store";
-import { API_ENDPOINT, AUTH_TOKEN, MAIN_SEARCH_URL } from "@config/config.index";
+import { AUTH_TOKEN, MAIN_SEARCH_URL } from "@config/config.index";
 import { Music } from "types/music.types";
-import { set } from "lodash";
-import { getAllMusic } from "@api/music.api";
-import { getPlaylistSongs } from "@api/playlist.api";
 import { PlaylistType } from "types/components.types";
 
 // Define types
